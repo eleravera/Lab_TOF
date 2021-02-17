@@ -7,7 +7,7 @@ from funzioni import muon_generator
 
 description = ''
 options_parser = argparse.ArgumentParser(description = description)
-options_parser.add_argument('--number_events', '-n', default=1, type=int, help='Numero di muoni da generare')
+options_parser.add_argument('--number_events', '-n', default=100, type=int, help='Numero di muoni da generare')
 options_parser.add_argument('--output_File_events', '-f', default='None', type=str, help='File su cui scrivere gli eventi')
 
 
