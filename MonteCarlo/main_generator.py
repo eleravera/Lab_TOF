@@ -4,7 +4,6 @@ import argparse
 
 import muon_generator
 
-
 description = ''
 options_parser = argparse.ArgumentParser(description = description)
 options_parser.add_argument('--number_events', '-n', default=100, type=int, help='Numero di muoni da generare')
@@ -22,10 +21,10 @@ if __name__ == '__main__' :
     theta = muon_generator.muon_theta_generator(N)
     phi = muon_generator.muon_phi_generator(N) 
     x1, y1 = muon_generator.position_generator(N) 
-
-    
-    x2, y2= position_on_scint3(x1, y1, theta, phi)
+    x2, y2 = muon_generator.position_on_scint3(x1, y1, theta, phi)
     
     #plt.show lo mettiamo per adesso qui per poter
+    plt.ion()
     plt.show()
+    
 

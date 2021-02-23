@@ -1,14 +1,15 @@
-
-from const import costants
 import numpy
 import matplotlib.pyplot as plt
 
+import geometry
 
-""" Spettro piatto; energie tra 10 e 1000 MeV. Poi bisognerà cambiare e mettere lo spettro vero e proprio"""
+MUON_MASS = 105. #MeV
+
+""" Spettro piatto; energie tra 106 e 1000 MeV. Poi bisognerà cambiare e mettere lo spettro vero e proprio"""
 
 def muon_energy_generator( N_events ): 
-  E_muon = numpy.random.uniform(10., 1000, N_events) 
-  P_muon = numpy.sqrt( E_muon**2 - costants.muon_mass **2)
+  E_muon = numpy.random.uniform(106., 1000, N_events) 
+  P_muon = numpy.sqrt( E_muon**2 - MUON_MASS **2)
   beta_muon = P_muon / E_muon  
   return E_muon, P_muon, beta_muon
 
@@ -34,8 +35,8 @@ def muon_phi_generator( N_events ):
 """Posizione sul primo scintillatore: x va da 0 ad L e y va da -l/2 a l/2"""
 
 def position_generator( N_events ): 
-  x_s1 = numpy.random.uniform(0., costants.L1, N_events)
-  y_s1 = numpy.random.uniform(-costants.l1/2, +costants.l1/2, N_events)
+  x_s1 = numpy.random.uniform(0., geometry.L1, N_events)
+  y_s1 = numpy.random.uniform(-geometry.l1/2, +geometry.l1/2, N_events)
   
   plt.figure(3)
   plt.hist(x_s1)
@@ -45,7 +46,7 @@ def position_generator( N_events ):
 
 
 def position_on_scint3(x_s1, y_s1, theta_muon, phi_muon):
-  z = costants.h + costants.l1/2 + costants.l2/2
+  z = geometry.h_12 + geometry.l1/2 + geometry.l2/2
   x_s2 = x_s1 + numpy.cos(phi_muon) * numpy.tan(theta_muon) * z
   y_s2 = y_s1 + numpy.sin(phi_muon) * numpy.tan(theta_muon) * z 
   
