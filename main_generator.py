@@ -17,7 +17,7 @@ if __name__ == '__main__' :
     N = options['number_events']
     output_file_events = options['output_File_events']
      
-    "Genero un muone con le funzioni di muon_generator" 
+    """Genero un muone con le funzioni di muon_generator"""
     E, P, beta = muon_generator.muon_energy_generator(N) 
     theta = muon_generator.muon_theta_generator(N)
     phi = muon_generator.muon_phi_generator(N) 
