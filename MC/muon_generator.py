@@ -4,7 +4,7 @@ import numpy
 import matplotlib.pyplot as plt
 
 
-" Spettro piatto; energie tra 10 e 1000 MeV. Poi bisognerà cambiare e mettere lo spettro vero e proprio"
+""" Spettro piatto; energie tra 10 e 1000 MeV. Poi bisognerà cambiare e mettere lo spettro vero e proprio"""
 
 def muon_energy_generator( N_events ): 
   E_muon = numpy.random.uniform(10., 1000, N_events) 
@@ -14,7 +14,7 @@ def muon_energy_generator( N_events ):
 
 
 
-" Spettro piatto in cos(theta) e in phi"
+""" Spettro piatto in cos(theta) e in phi"""
 
 def muon_theta_generator( N_events ): 
   cos_theta = numpy.random.uniform(-1., +1., N_events) 
@@ -31,7 +31,7 @@ def muon_phi_generator( N_events ):
   plt.hist(phi_muon)
   return phi_muon
 
-"Posizione sul primo scintillatore: x va da 0 ad L e y va da -l/2 a l/2"
+"""Posizione sul primo scintillatore: x va da 0 ad L e y va da -l/2 a l/2"""
 
 def position_generator( N_events ): 
   x_s1 = numpy.random.uniform(0., costants.L1, N_events)
