@@ -11,7 +11,7 @@ import argparse
 
 description = ''
 options_parser = argparse.ArgumentParser(description = description)
-options_parser.add_argument('input_file', 'f', type=str, help='File dei tempi tra PM1 e PM2')
+options_parser.add_argument('-input_file', '-f', type=str, help='File dei tempi tra PM1 e PM2')
 
 options = vars(options_parser.parse_args())  
 input_file = options['input_file']
