@@ -22,6 +22,8 @@ if __name__ == '__main__' :
     x1, y1 = muon_generator.position_generator(N) 
     x3, y3 = muon_generator.position_on_scint3(x1, y1, theta, phi)
     
+    t12 = muon_generator.DT_12(x1) 
+    
     
     data = numpy.vstack((x1, y1, x3, y3)).T
     print(data)
