@@ -18,12 +18,15 @@ if __name__ == '__main__' :
      
     """Genero un muone con le funzioni di muon_generator"""
     E, P, beta = muon_generator.muon_energy_generator(N) 
-    theta = muon_generator.muon_theta_generator(N)
-    phi = muon_generator.muon_phi_generator(N) 
+    theta, phi = muon_generator.muon_angle_generator(N)
     x1, y1 = muon_generator.position_generator(N) 
-    x2, y2 = muon_generator.position_on_scint3(x1, y1, theta, phi)
+    x3, y3 = muon_generator.position_on_scint3(x1, y1, theta, phi)
     
-    #plt.show lo mettiamo per adesso qui per poter
+    
+    data = numpy.vstack((x1, y1, x3, y3)).T
+    print(data)
+    print(numpy.vstack((x3, y3)).T)
+    
     plt.ion()
     plt.show()
     
