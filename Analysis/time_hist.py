@@ -1,44 +1,37 @@
-""" Questo script serve per visualizzare le distribuzioni della differenza dei tempi tra l'arrivo del segnale nel PM1 e il PM2 (o viceversa)
- Per la misura della risoluzione possiamo provare a fittare con una gaussiana"""
+""" Questo script serve per visualizzare le distribuzioni della differenza dei tempi tra l'arrivo del segnale nel PM1 e il PM2 e tra PM1 e PM3"""
 import argparse 
 import numpy
 import matplotlib.pyplot as plt
 
-def gauss(x, mean, sigma, norm): 
-  return (norm) * numpy.exp(-0.5 * ((x - mean)/sigma )**2)
-
-"""Da terminale si da in input il file dei tempi tra PM1 e PM2 (acquisizioni con FPGA)"""
+"""Da terminale si da in input il file di acquisizione"""
 description = ''
 options_parser = argparse.ArgumentParser(description = description)
-options_parser.add_argument('-input_file', '-f', type=str, help='File dei tempi tra PM1 e PM2')
+options_parser.add_argument('-input_file', '-f', type=str, help='File di acquisizione')
 
 options = vars(options_parser.parse_args())  
 input_file = options['input_file']
 
 
-"""Non so come saranno fatti i file di acquisizione, bisognerà adattare questa parte sul momento"""
-x1, T12, x3  = numpy.loadtxt(input_file, unpack = True)
+t, T12,  T13  = numpy.loadtxt(input_file, unpack = True)
 
+t_run = t.max() -t.min()
+
+print(len(t), "events recorded in ", t_run, "s")
 
 """Istogramma"""
-bins = numpy.rint(numpy.sqrt(len(T12))) 
+bins = int(numpy.sqrt(len(T12))) 
 print(bins)
+
 plt.figure(1)
-plt.xlabel("T_12 [arb_unit] ")
-plt.hist(T12,  bins = 40)
+plt.xlabel("T_12 [arb_unit]")
+plt.ylabel("dN/dT_12")
+plt.hist(T12,  bins = bins, range = (0.0, 0.7))
 
 
-"""Fit gaussiano e plot del fit"""
-"""#p0 = [, ,]
-opt, pcov = curve_fit(gauss, T_12, counts, p0 = None)
-T_12max = numpy.amax(T_12)
-#Qual è il range dell ADC? Al posto di 500 bisogna mettere i bin totali dell'ADC
-plt.plot(numpy.linspace(0, T_12max, 500), gauss(numpy.linspace(0, T_12max, 500) , *opt), '-')
-
-print("mean, sigma, norm: " , *opt )
-ptint("matrice di covarianza: ", *pcov)
-print("chi_square: " , chi_square )"""
-
+plt.figure(2)
+plt.xlabel("T_13 [arb_unit] ")
+plt.ylabel("dN/dT_13")
+plt.hist(T13,  bins = bins, range = (0.2, 0.6))
 
 plt.ion()
 plt.show()
