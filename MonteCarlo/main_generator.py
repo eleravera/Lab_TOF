@@ -19,8 +19,8 @@ if __name__ == '__main__' :
     """Genero un muone con le funzioni di muon_generator"""
     E, P, beta = muon_generator.muon_energy_generator(N) 
     theta, phi = muon_generator.muon_angle_generator(N)
-    x1, y1 = muon_generator.position_generator(N) 
-    x3, y3 = muon_generator.position_on_scint3(x1, y1, theta, phi)
+    x1, y1 = muon_generator.position_on_S1_generator(N) 
+    x3, y3 = muon_generator.propagation_from_S1_to_S3(x1, y1, theta, phi)
     
     t12 = muon_generator.DT_12(x1) 
     
