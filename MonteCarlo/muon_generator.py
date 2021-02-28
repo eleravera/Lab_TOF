@@ -1,5 +1,7 @@
 import numpy
 import matplotlib.pyplot as plt
+import scipy.integrate as integrate
+from scipy.interpolate import interp1d
 
 import geometry
 
@@ -15,10 +17,10 @@ def muon_energy_generator( N_events ):
 
 """ Spettro piatto in cos(theta) e in phi"""
 def muon_angle_generator( N_events ): 
-  cos_theta = numpy.random.uniform(-1., +1., N_events) 
+  cos_theta= numpy.random.uniform(-1., +1., N_events)
   theta_muon = numpy.arccos(cos_theta)
   phi_muon = numpy.random.uniform(0, 2 * numpy.pi, N_events )   
-  
+ 
   plt.figure("Theta e phi")
   plt.subplot(2, 1, 1)
   plt.hist(cos_theta)
@@ -70,12 +72,14 @@ def position_on_S1_generator( N_events ):
 
 """Calcola la posizione sul piano dello scintillatore 3 partendo dallo scintillatore 1 quando il 3 sta sotto"""
 def propagation_from_S1_to_S3(x_s1, y_s1, theta_muon, phi_muon):
-  z = geometry.h_13 + geometry.Y1/2 + geometry.l3/2
+  z = geometry.Z1/2 + geometry.Z3/2 #geometry.h_13 + geometry.Z1/2 + geometry.Z3/2
   x_s3 = x_s1 + numpy.cos(phi_muon) * numpy.tan(theta_muon) * z
   y_s3 = y_s1 + numpy.sin(phi_muon) * numpy.tan(theta_muon) * z 
   
-  mask_x = (x_s3 < (geometry.X1 * 0.5 + geometry.l3 * 0.5)) * (x_s3 > (geometry.X1 * 0.5 - geometry.l3 * 0.5))  
-  mask_y = (y_s3 < geometry.l3 * 0.5) * (y_s3 > - geometry.l3 * 0.5)     
+  mask = ((x_s3 > (1.58-geometry.X3/2)) * (x_s3 < (1.58+geometry.X3/2)) * (y_s3 < geometry.Y3/2) * (y_s3 > -geometry.Y3/2))
+  
+  mask_x = (x_s3 < (geometry.X1 * 0.5 + geometry.X3 * 0.5)) * (x_s3 > (geometry.X1 * 0.5 - geometry.X3 * 0.5))  
+  mask_y = (y_s3 < geometry.Y3 * 0.5) * (y_s3 > - geometry.Y3 * 0.5)     
   print(len(x_s3[mask_x]), len(x_s3))
   
   plt.figure("Muon position on scintillator 3 ")
@@ -87,7 +91,7 @@ def propagation_from_S1_to_S3(x_s1, y_s1, theta_muon, phi_muon):
   plt.hist(y_s3[mask_y]* 10**2)
   plt.xlabel("y_s3 [cm]")  
  
-  return x_s3, y_s3
+  return x_s3, y_s3, mask
 
 
 """Propagazione dei fotoni dentro lo scintillatore """
