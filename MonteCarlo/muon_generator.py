@@ -1,29 +1,36 @@
 import numpy
 import matplotlib.pyplot as plt
 import scipy.integrate as integrate
+from scipy.integrate import quad
 from scipy.interpolate import interp1d
 
 import geometry
 
 MUON_MASS = 105. #MeV
 
-""" Spettro piatto; energie tra 106 e 1000 MeV. Poi bisognerà cambiare e mettere lo spettro vero e proprio"""
-def muon_energy_generator( N_events ): 
-  E_muon = numpy.random.uniform(106., 1000, N_events) 
-  P_muon = numpy.sqrt( E_muon**2 - MUON_MASS **2)
-  beta_muon = P_muon / E_muon    
-  return E_muon, P_muon, beta_muon
+"Distribuzione in theta dei muoni: va come cos^2"
+def dist_theta(theta):
+    return (2/numpy.pi) * (numpy.cos(theta))**2
 
+""" Genero muoni nell'angolo solido"""
+def muon_angle_generator(N_events, pdf): 
+  theta = numpy.linspace(0., numpy.pi, 200) #base su cui integro 
+  cdf_y  = []
+  for i in range(len(theta)):
+    y, rest = quad(pdf, theta[0], theta[i])  #integro cos^2 fino a theta
+    cdf_y.append(y)       
+  cdf_y, unique_indices = numpy.unique(cdf_y, return_index=True) #levo i punti "stazionari"
+  theta = theta[unique_indices] #levo i punti "stazionari"
+  funzione = interp1d(cdf_y, theta)       
 
-""" Spettro piatto in cos(theta) e in phi"""
-def muon_angle_generator( N_events ): 
-  cos_theta= numpy.random.uniform(-1., +1., N_events)
-  theta_muon = numpy.arccos(cos_theta)
+  x = numpy.random.uniform(0., 1., N_events)
+  theta_muon = funzione(x)
+  
   phi_muon = numpy.random.uniform(0, 2 * numpy.pi, N_events )   
  
   plt.figure("Theta e phi")
   plt.subplot(2, 1, 1)
-  plt.hist(cos_theta)
+  plt.hist(theta_muon, bins = int(numpy.sqrt(N_events)))
   plt.xlabel("cos(theta)")
   
   plt.subplot(2, 1, 2)
@@ -31,6 +38,14 @@ def muon_angle_generator( N_events ):
   plt.xlabel("phi")
   
   return theta_muon, phi_muon
+
+
+""" Spettro piatto; energie tra 106 e 1000 MeV. Poi bisognerà cambiare e mettere lo spettro vero e proprio"""
+def muon_energy_generator( N_events ): 
+  E_muon = numpy.random.uniform(106., 1000, N_events) 
+  P_muon = numpy.sqrt( E_muon**2 - MUON_MASS **2)
+  beta_muon = P_muon / E_muon    
+  return E_muon, P_muon, beta_muon
 
   
 """Posizione sullo scintillatore 3: distribuzione uniforme"""  
