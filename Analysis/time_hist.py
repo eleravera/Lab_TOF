@@ -31,8 +31,8 @@ n_bins = 45 #int(numpy.sqrt(len(T12)))
 T12 = T12 * 80 #ns
 T13 = T13 * 80 
 
-range_T12 = (37., 60.)
-range_T13 = (20., 37.)
+range_T12 = (42., 62.)
+range_T13 = (30., 55.)
 
 
 def T_hist_plot(t , xlabel, ylabel, range_t):
@@ -48,10 +48,12 @@ def T_hist_plot(t , xlabel, ylabel, range_t):
   opt, pcov = curve_fit(gauss, bin_centers[mask], n[mask], sigma = numpy.sqrt(n[mask]), p0 = p0)    
   print("Parametri del fit (norm, mean, sigma): %s" % opt)
   print("Matrice di covarianza:\n%s" % pcov) 
+  print("Incertezze:\n%s" % numpy.sqrt(numpy.diagonal(pcov))) 
 
   bin_grid = numpy.linspace(*range_t, 1000)
-  plt.plot(bin_grid, gauss(bin_grid, *opt), '-r')    
- 
+  legend = ("norm: %f\nmean: %f\nsigma: %f" % tuple(opt))
+  plt.plot(bin_grid, gauss(bin_grid, *opt), '-r', label = legend)    
+  plt.legend() 
   return 
 
 
