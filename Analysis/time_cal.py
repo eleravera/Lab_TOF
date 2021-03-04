@@ -20,7 +20,7 @@ options = vars(options_parser.parse_args())
 input_file = options['input_file']
 
 
-x, T12_norm, T12_mean, T12_sigma  = numpy.loadtxt(input_file, unpack = True)
+x, n, T12_norm, T12_mean, T12_sigma, x, T12_norm, T12_mean, T12_sigma  = numpy.loadtxt(input_file, unpack = True)
 
 "La risoluzione si definisce come FWHM della distribuzione in t / valor medio dello spettro "
 T12_resolution = T12_sigma 
