@@ -22,43 +22,41 @@ input_file = options['input_file']
 
 
 t, T12,  T13  = numpy.loadtxt(input_file, unpack = True)
-"Regolazione scala "
-T12 = T12 * 80 #ns
-T13 = T13 * 80 
-
 t_run = t.max() -t.min()
 print("\n%d events recorded in %f s\nRate: %f Hz\n" % (len(t), t_run, len(t)/t_run) )
 
 
 """Istogramma"""
 n_bins = 45 #int(numpy.sqrt(len(T12))) 
+T12 = T12 * 80 #ns
+T13 = T13 * 80 
 
-plt.figure(1)
-plt.xlabel("T_12 [ns]")
-plt.ylabel("dN/dT_12")
-n, bins, patches = plt.hist(T12,  bins = n_bins, range = (0., 50.))
-
-bin_centers = 0.5 * (bins[1:] + bins[:-1])
-p0 = [200, 42., 2.]
-opt_12, pcov_12 = curve_fit(gauss, bin_centers, n, p0 = p0)    
-
-print("Parametri del fit T12 (norm, mean, sigma): %s" % opt_12)
-print("Matrice di covarianza:\n%s" % pcov_12) 
-plt.plot(bin_centers, gauss(bin_centers, *opt_12), '-r')    
+range_T12 = (37., 60.)
+range_T13 = (20., 37.)
 
 
+def T_hist_plot(t , xlabel, ylabel, range_t):
+  n_bins = 45 #int(numpy.sqrt(len(T12))) 
+  plt.figure()
+  plt.xlabel(xlabel)
+  plt.ylabel(ylabel)
+  n, bins, patches = plt.hist(t,  bins = n_bins, range = range_t)
+  bin_centers = 0.5 * (bins[1:] + bins[:-1])
 
-plt.figure(2)
-plt.xlabel("T_13 [ns] ")
-plt.ylabel("dN/dT_13")
-n, bins, patches = plt.hist(T13,  bins = n_bins, range = (20., 45.))
-bin_centers = 0.5 * (bins[1:] + bins[:-1])
-p0 = [200, 33., 2.]
-opt_13, pcov_13 = curve_fit(gauss, bin_centers, n,  p0 = p0)    
-print("Parametri del fit T13 (norm, mean, sigma): %s" % opt_13)
-print("Matrice di covarianza:\n%s" % pcov_13) 
-plt.plot(bin_centers, gauss(bin_centers, *opt_13), '-r')  
+  p0 = [len(t), numpy.mean(t), 2.]
+  mask = (n > 0.)
+  opt, pcov = curve_fit(gauss, bin_centers[mask], n[mask], sigma = numpy.sqrt(n[mask]), p0 = p0)    
+  print("Parametri del fit (norm, mean, sigma): %s" % opt)
+  print("Matrice di covarianza:\n%s" % pcov) 
 
+  bin_grid = numpy.linspace(*range_t, 1000)
+  plt.plot(bin_grid, gauss(bin_grid, *opt), '-r')    
+ 
+  return 
+
+
+T_hist_plot(T12, "T_12 [ns]", "dN/dT_12", range_T12)
+T_hist_plot(T13, "T_13 [ns]", "dN/dT_13", range_T13)
 
 plt.ion() 
 plt.show()
