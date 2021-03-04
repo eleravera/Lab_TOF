@@ -4,10 +4,13 @@
 "  T_12 larghezza  "
 
 "  T_12 medio e T_12 larghezza sono i valori ottenuti dai fit gaussiani sugli spettri acquisiti con l'ADC  "
-
 import numpy
 import matplotlib.pyplot as plt
 import argparse 
+from scipy.optimize import curve_fit
+
+def line(x, m , q):
+  return m * x +q
 
 description = ''
 options_parser = argparse.ArgumentParser(description = description)
@@ -20,17 +23,27 @@ input_file = options['input_file']
 x, T12_norm, T12_mean, T12_sigma  = numpy.loadtxt(input_file, unpack = True)
 
 "La risoluzione si definisce come FWHM della distribuzione in t / valor medio dello spettro "
-T12_resolution = 2.35 * T12_sigma / T12_mean
+T12_resolution = T12_sigma 
 print(x, T12_mean, T12_resolution)
+
+p0 = [1., 1. ]
+opt, pcov = curve_fit(line, x, T12_mean, sigma = T12_sigma/numpy.sqrt(800), p0 = p0)    
+print("Parametri del fit : %s" % opt)
+print("Matrice di covarianza:\n%s" % pcov) 
 
 
 "Risoluzione della misura del tempo in funzione di x "
-plt.figure(1)
-plt.xlabel("x [m]")
+plt.figure("Calibrazione")
+plt.xlabel("x [cm]")
 plt.ylabel("T12 [ns]")
-plt.errorbar(x, T12_resolution, yerr=None, xerr=None, fmt='.')#xerr? yerr=?
+plt.errorbar(x, T12_mean, yerr=T12_sigma/numpy.sqrt(800), xerr=None, fmt='.')
+plt.plot(numpy.linspace(0.,300, 1000), line(numpy.linspace(0.,300, 1000), *opt), 'r' )
 
 
+plt.figure("Risoluzione")
+plt.xlabel("T12_mean [ns]")
+plt.ylabel("Resolution")
+plt.errorbar(T12_mean, T12_resolution, xerr=None, fmt='.')
 
 plt.ion()
 plt.show()
