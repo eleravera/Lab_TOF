@@ -4,7 +4,6 @@ import argparse
 import datetime
 import time
 
-
 import muon_generator
 
 description = ''
@@ -22,7 +21,7 @@ if __name__ == '__main__' :
      
     """Genero un muone con le funzioni di muon_generator"""
     E, P, beta = muon_generator.muon_energy_generator(N) 
-    theta, phi = muon_generator.muon_angle_generator(N)
+    theta, phi = muon_generator.muon_angle_generator(N, muon_generator.dist_theta)
     x1, y1 = muon_generator.position_on_S1_generator(N) 
     x3, y3, f = muon_generator.propagation_from_S1_to_S3(x1, y1, theta, phi)
     
@@ -31,8 +30,7 @@ if __name__ == '__main__' :
     print("x1, y1, theta, phi, x3, y3, flag \n", data) 
             
     print("Number of events hitting S3/Total number of events on S1:", numpy.sum(f), "/", N, "=", epsilon)
-       
-     
+            
     if(output_file_events.endswith('.txt')): 
       header ='%s \nx1[m], y1[cm], theta, phi, x3[m], y3[cm], flag\n' % datetime.datetime.now()
       fmt = ['%.4f', '%.4f', '%.2f', '%.2f', '%.4f', '%.4f', '%d']
@@ -41,7 +39,6 @@ if __name__ == '__main__' :
     
     print("Time of execution: %s seconds " % (time.time() - start_time))
         
+
     plt.ion()
     plt.show()
-    
-

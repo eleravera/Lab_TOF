@@ -23,7 +23,7 @@ if __name__ == '__main__' :
     plt.figure("Distribuzione X_t")
     #plt.subplot(2, 1 , 1)
     plt.xlabel("x_true [m]")
-    n, bins, patches = plt.hist(x_t, bins = int(numpy.sqrt(len(x_m))) , range = (0., geometry.X1))
+    n, bins, patches = plt.hist(x_t, bins = int(numpy.sqrt(len(x_m))) , range = (0., 1.2))
     bin_centers = 0.5 * (bins[1:] + bins[:-1])
     polynomial_f = interp1d(bin_centers, n, kind='cubic')    
     #opt, pcov = curve_fit(gauss, bin_centers, n)    

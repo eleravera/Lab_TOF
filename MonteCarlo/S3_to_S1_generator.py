@@ -22,7 +22,7 @@ if __name__ == '__main__' :
     output_file_events = options['output_File_events']
               
     x_m, y_m = muon_generator.position_on_S3_generator(N, x)
-    theta, phi = muon_generator.muon_angle_generator(N)
+    theta, phi = muon_generator.muon_angle_generator(N, muon_generator.dist_theta)
     x_t, y_t, f = muon_generator.propagation_from_S3_to_S1(x_m, y_m, theta, phi)
 
     data = numpy.vstack((x_m, y_m*100, theta, phi, x_t, y_t*100, f)).T  
@@ -39,5 +39,4 @@ if __name__ == '__main__' :
 
     print("Time of execution: %s seconds " % (time.time() - start_time))
  
-    
-    
+
