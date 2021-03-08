@@ -24,12 +24,19 @@ if __name__ == '__main__' :
     mask = (f == 1) 
     delay = numpy.ones(len(E[mask])) * delay_ns
 
-
+    print("efficienza:", numpy.sum(mask)/len(mask))
     T1, T2, T12 = signal_propagation.DT_12(x1[mask], delay)
     TOF, T13 = signal_propagation.DT_13(x1[mask], x3[mask], delay, beta[mask]) 
     n_bins = 50
 
-    print(T12, T13)
+
+    
+    plt.figure("x")
+    plt.subplot(2, 1, 1)
+    plt.hist(x1[mask],  bins = n_bins)   
+    plt.subplot(2, 1, 2)
+    plt.hist(x3[mask],  bins = n_bins)   
+
 
     plt.figure("T12,T13")
     plt.subplot(2, 1, 1)
@@ -38,11 +45,15 @@ if __name__ == '__main__' :
     plt.hist(T13,  bins = n_bins)   
 
     plt.figure("TOF")
-    plt.hist(TOF,  bins = n_bins, range= (6., 14.))
+    plt.hist(TOF,  bins = n_bins, range= (0, 2.))
 
     plt.figure("T12vsT13")
     plt.plot(T12, T13, '.')
-
+    plt.xlabel("T12 [ns]")
+    plt.xlim(0., 50.)
+    plt.ylabel("T13 [ns]")
+    plt.ylim(0., 50.)
+    
     plt.ion()
     plt.show()
     

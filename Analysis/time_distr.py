@@ -26,14 +26,14 @@ print("Delta t max: ", Delta_t.max())
   
 n_bins = 45
 plt.figure("Time distribution")  
-n, bins, patches = plt.hist(Delta_t,  bins = n_bins, range = (0., 100.))
+n, bins, patches = plt.hist(Delta_t,  bins = n_bins, range = (0., 15.))
 bin_centers = 0.5 * (bins[1:] + bins[:-1])
 #p0 = [Delta, numpy.mean(t), 2.]
 mask = (n > 0.)
 opt, pcov = curve_fit(exponential, bin_centers[mask], n[mask], sigma = numpy.sqrt(n[mask]))    
 print("fit parameters (amplitude, rate): %s" % opt)
 
-bin_grid = numpy.linspace(0., 100, 1000)
+bin_grid = numpy.linspace(0., 15., 1000)
 legend = ("ampl: %f\nrate: %f" % tuple(opt))
 plt.plot(bin_grid, exponential(bin_grid, *opt), '-r', label = legend)    
 plt.legend() 

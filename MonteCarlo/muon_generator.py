@@ -14,7 +14,7 @@ def dist_theta(theta):
 
 """ Genero muoni nell'angolo solido"""
 def muon_angle_generator(N_events, pdf): 
-  theta = numpy.linspace(0., numpy.pi, 200) #base su cui integro 
+  theta = numpy.linspace(-numpy.pi/2, +numpy.pi/2, 200) #base su cui integro 
   cdf_y  = []
   for i in range(len(theta)):
     y, rest = quad(pdf, theta[0], theta[i])  #integro cos^2 fino a theta
@@ -91,7 +91,7 @@ def propagation_from_S1_to_S3(x_s1, y_s1, theta_muon, phi_muon):
   x_s3 = x_s1 + numpy.cos(phi_muon) * numpy.tan(theta_muon) * z
   y_s3 = y_s1 + numpy.sin(phi_muon) * numpy.tan(theta_muon) * z 
   
-  mask = ((x_s3 > (geometry.X1/2-geometry.X3/2)) * (x_s3 < (geometry.X1/+geometry.X3/2)) * (y_s3 < geometry.Y3/2) * (y_s3 > -geometry.Y3/2))
+  mask = ((x_s3 > (geometry.X1/2-geometry.X3/2)) * (x_s3 < (geometry.X1/2+geometry.X3/2)) * (y_s3 < geometry.Y3/2) * (y_s3 > -geometry.Y3/2))
   
   mask_x = (x_s3 < (geometry.X1 * 0.5 + geometry.X3 * 0.5)) * (x_s3 > (geometry.X1 * 0.5 - geometry.X3 * 0.5))  
   mask_y = (y_s3 < geometry.Y3 * 0.5) * (y_s3 > - geometry.Y3 * 0.5)     
