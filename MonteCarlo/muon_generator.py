@@ -91,7 +91,7 @@ def propagation_from_S1_to_S3(x_s1, y_s1, theta_muon, phi_muon):
   x_s3 = x_s1 + numpy.cos(phi_muon) * numpy.tan(theta_muon) * z
   y_s3 = y_s1 + numpy.sin(phi_muon) * numpy.tan(theta_muon) * z 
   
-  mask = ((x_s3 > (1.58-geometry.X3/2)) * (x_s3 < (1.58+geometry.X3/2)) * (y_s3 < geometry.Y3/2) * (y_s3 > -geometry.Y3/2))
+  mask = ((x_s3 > (geometry.X1/2-geometry.X3/2)) * (x_s3 < (geometry.X1/+geometry.X3/2)) * (y_s3 < geometry.Y3/2) * (y_s3 > -geometry.Y3/2))
   
   mask_x = (x_s3 < (geometry.X1 * 0.5 + geometry.X3 * 0.5)) * (x_s3 > (geometry.X1 * 0.5 - geometry.X3 * 0.5))  
   mask_y = (y_s3 < geometry.Y3 * 0.5) * (y_s3 > - geometry.Y3 * 0.5)     
@@ -109,25 +109,7 @@ def propagation_from_S1_to_S3(x_s1, y_s1, theta_muon, phi_muon):
   return x_s3, y_s3, mask
 
 
-"""Propagazione dei fotoni dentro lo scintillatore """
-def DT_12(x_s1): 
-  T_r = (geometry.X1 - x_s1) / geometry.v_gamma
-  T_l = x_s1 / geometry.v_gamma  
-  DT_12 = numpy.abs(T_r - T_l)  
-  
-  plt.figure("Delta t PM1 and 2")
-  plt.hist(DT_12 * 10**9)
-  plt.xlabel("DT_12 [ns]")
-  
-  return DT_12
-  
-"""def DT_13(x_s1, x_s3): 
-  T_1 = x_s1 / geometry.v_gamma  
-  T_3 = x_s3 / geometry.v_gamma  
 
-  DT_13 = (T_r - T_l)  + cost
-  
-  return DT_13"""
     
   
   

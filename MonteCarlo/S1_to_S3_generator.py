@@ -32,9 +32,9 @@ if __name__ == '__main__' :
     print("Number of events hitting S3/Total number of events on S1:", numpy.sum(f), "/", N, "=", epsilon)
             
     if(output_file_events.endswith('.txt')): 
-      header ='%s \nx1[m], y1[cm], theta, phi, x3[m], y3[cm], flag\n' % datetime.datetime.now()
-      fmt = ['%.4f', '%.4f', '%.2f', '%.2f', '%.4f', '%.4f', '%d']
-      numpy.savetxt(output_file_events, numpy.transpose([x1, y1*100, theta, phi, x3, y3*100, f]) , fmt=fmt, header=header)
+      header ='%s \nE[MeV], P [MeV], beta, x1[m], y1[cm], theta, phi, x3[m], y3[cm], flag\n' % datetime.datetime.now()
+      fmt = ['%.4f', '%.4f', '%.4f', '%.4f', '%.4f', '%.2f', '%.2f', '%.4f', '%.4f', '%d']
+      numpy.savetxt(output_file_events, numpy.transpose([E, P, beta, x1, y1*100, theta, phi, x3, y3*100, f]) , fmt=fmt, header=header)
       print("Output file saved!\n\n")
     
     print("Time of execution: %s seconds " % (time.time() - start_time))

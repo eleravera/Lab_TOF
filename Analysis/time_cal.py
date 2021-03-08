@@ -20,30 +20,40 @@ options = vars(options_parser.parse_args())
 input_file = options['input_file']
 
 
-x, n, T12_norm, T12_mean, T12_sigma, x, T12_norm, T12_mean, T12_sigma  = numpy.loadtxt(input_file, unpack = True)
+x, n, T_norm, T_mean, T_sigma, dT_norm, dT_mean, dT_sigma  = numpy.loadtxt(input_file, unpack = True)
 
-"La risoluzione si definisce come FWHM della distribuzione in t / valor medio dello spettro "
-T12_resolution = T12_sigma 
-print(x, T12_mean, T12_resolution)
-
-p0 = [1., 1. ]
-opt, pcov = curve_fit(line, x, T12_mean, sigma = T12_sigma/numpy.sqrt(800), p0 = p0)    
-print("Parametri del fit : %s" % opt)
-print("Matrice di covarianza:\n%s" % pcov) 
+def line_fit(x, y, dy, xlabel, ylabel):
+  p0 = [1., 1. ]
+  opt, pcov = curve_fit(line, x, y, sigma = dy)    
+  print("Parametri del fit : %s" % opt)
+  print("Matrice di covarianza: %s\n" % pcov)
+  #print("chiqudro: %f\n")
 
 
-"Risoluzione della misura del tempo in funzione di x "
-plt.figure("Calibrazione")
-plt.xlabel("x [cm]")
-plt.ylabel("T12 [ns]")
-plt.errorbar(x, T12_mean, yerr=T12_sigma/numpy.sqrt(800), xerr=None, fmt='.')
-plt.plot(numpy.linspace(0.,300, 1000), line(numpy.linspace(0.,300, 1000), *opt), 'r' )
+  plt.subplot(2, 1, 1)
+
+  plt.ylabel(ylabel)
+  plt.errorbar(x, y, yerr=dy, xerr=None, fmt='.')
+  legend = ("m: %f ns/cm\nq: %f ns" % tuple(opt))
+  plt.plot(numpy.linspace(0.,300, 1000), line(numpy.linspace(0.,300, 1000), *opt), 'r', label = legend)
+  plt.legend() 
+  plt.subplot(2, 1, 2)
+  plt.errorbar(x, y-line(x, *opt), yerr=dy, fmt='.')
+  plt.ylabel("residui")
+  plt.xlabel(xlabel)
+
+  return opt, pcov
+
+plt.figure(1)
+opt, pcov = line_fit(x, T_mean, T_sigma/numpy.sqrt(n),  "x [cm]", "T [ns]" )
+print("Velocità misurata: %s +- %s\n" %(1/opt[0], numpy.sqrt(pcov[0][0])/opt[0]**2))
+
+plt.figure(2)
+T_res = T_sigma * 2.35 
+dT_res = (2.35) * dT_sigma #numpy.sqrt( (dT_sigma/T_mean)**2 + (T_sigma*dT_mean/T_mean**2)**2 )
+opt, pcov = line_fit(x, T_res, dT_res, "x [cm]", "Risoluzione" )
 
 
-plt.figure("Risoluzione")
-plt.xlabel("T12_mean [ns]")
-plt.ylabel("Resolution")
-plt.errorbar(T12_mean, T12_resolution, xerr=None, fmt='.')
 
 plt.ion()
 plt.show()
