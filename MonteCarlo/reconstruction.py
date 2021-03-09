@@ -28,8 +28,6 @@ if __name__ == '__main__' :
     T1, T2, T12 = signal_propagation.DT_12(x1[mask], delay)
     TOF, T13 = signal_propagation.DT_13(x1[mask], x3[mask], delay, beta[mask]) 
     n_bins = 50
-
-
     
     plt.figure("x")
     plt.subplot(2, 1, 1)
