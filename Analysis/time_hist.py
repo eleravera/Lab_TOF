@@ -22,7 +22,7 @@ options = vars(options_parser.parse_args())
 input_file = options['input_file']
 scale = options['fondo_scala']
 
-t, T12,  T13  = numpy.loadtxt(input_file, unpack = True)
+t, T23,  T13  = numpy.loadtxt(input_file, unpack = True)
 t_run = t.max() -t.min()
 
 Delta_t = numpy.ediff1d(t)
@@ -32,14 +32,14 @@ t_run = t.max() -t.min() +  numpy.sum(mask_t) * 6514
 
 
 print("\n%d events recorded in %f s\nRate: %f Hz\n" % (len(t), t_run, len(t)/t_run) )
-print("T12 max:", T12.max())
+print("T23 max:", T23.max())
 print("T13 max:", T13.max())
 
 """ Saturazione FPGA """
-mask1 = T12 > 3.2
+mask1 = T23 > 3.2
 mask2 = T13 > 3.2
 
-print("rate eventi t12 sopra soglia", numpy.sum(mask1)/t_run)
+print("rate eventi T23 sopra soglia", numpy.sum(mask1)/t_run)
 print("rate eventi t13 sopra soglia",numpy.sum(mask2)/t_run)
 
 print("t1 sopra soglia", 20 * numpy.sum(mask1)/t_run)
@@ -48,22 +48,22 @@ print("t1 sopra soglia", 20 *numpy.sum(mask2)/t_run)
 
 print("Frazione di eventi sopra soglia: %f., %f." % (numpy.sum(mask1)/len(t), numpy.sum(mask2)/len(t)))
 """Istogramma"""
-n_bins = 45 #int(numpy.sqrt(len(T12))) 
-T12 = T12 * scale/10 #ns
+n_bins = 45 #int(numpy.sqrt(len(T23))) 
+T23 = T23 * scale/10 #ns
 T13 = T13 * scale/10 
-print("MASSIMI", T12.max(), T13.max())
+print("MASSIMI", T23.max(), T13.max())
 
-maskera0 = T12 < 0.5
+maskera0 = T23 < 0.5
 print("integrale eventi <0.5", numpy.sum(maskera0))
 
 
 
-range_T12 = (3., 100.) # 35, 50.
-range_T13 = (3., 100.)
+range_T23 = (10., 60.) # 35, 50.
+range_T13 = (10., 60.)
 
 
 def T_hist_plot(t , xlabel, ylabel, range_t):
-  n_bins = 45 #int(numpy.sqrt(len(T12))) 
+  n_bins = 45 #int(numpy.sqrt(len(T23))) 
   plt.figure()
   plt.xlabel(xlabel)
   plt.ylabel(ylabel)
@@ -71,7 +71,7 @@ def T_hist_plot(t , xlabel, ylabel, range_t):
   bin_centers = 0.5 * (bins[1:] + bins[:-1])
 
   p0 = [len(t), numpy.mean(t), 1.]
-  mask = (n > 0.) * (n < 830)
+  mask = (n > 0.) 
   opt, pcov = curve_fit(gauss, bin_centers[mask], n[mask], sigma = numpy.sqrt(n[mask]), p0 = p0)    
   print("Parametri del fit (norm, mean, sigma): %s" % opt)
   print("Matrice di covarianza:\n%s" % pcov) 
@@ -84,12 +84,12 @@ def T_hist_plot(t , xlabel, ylabel, range_t):
   return 
 
 
-T_hist_plot(T12, "T_12 [ns]", "dN/dT_12", range_T12)
+T_hist_plot(T23, "T_23 [ns]", "dN/dT_23", range_T23)
 T_hist_plot(T13, "T_13 [ns]", "dN/dT_13", range_T13)
 
-plt.figure("t13t12")
-plt.plot(T12, T13, '.')
-plt.xlabel("T12 [ns]")
+plt.figure("t13T23")
+plt.plot(T23, T13, '.')
+plt.xlabel("T23 [ns]")
 plt.ylabel("T13 [ns]")
 
 plt.ion() 

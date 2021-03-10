@@ -69,7 +69,7 @@ def position_on_S1_generator( N_events ):
 
 """Calcola la posizione sul piano dello scintillatore 3 partendo dallo scintillatore 1 quando il 3 sta sotto"""
 def propagation_from_S1_to_S3(x_s1, y_s1, theta_muon, phi_muon):
-  z = geometry.h_13 + geometry.Z1/2 + geometry.Z3/2
+  z = geometry.Z1/2 + geometry.Z3/2 + geometry.h_13 
   x_s3 = x_s1 + numpy.cos(phi_muon) * numpy.tan(theta_muon) * z 
   y_s3 = y_s1 + numpy.sin(phi_muon) * numpy.tan(theta_muon) * z 
   
