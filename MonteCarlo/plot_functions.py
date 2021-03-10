@@ -35,7 +35,7 @@ def multiple_histogram(var1, var2, xlabel1, xlabel2, bin_var = None, range_var1=
   if(bin_var is None ): 
     bin_var = int(numpy.sqrt(len(var1)))
   if (range_var1 is None):
-   range_var1 = (var1.min(), var1.max()) 
+    range_var1 = (var1.min(), var1.max()) 
   if (range_var2 is None):
     range_var2 = (var2.min(), var2.max())   
 
