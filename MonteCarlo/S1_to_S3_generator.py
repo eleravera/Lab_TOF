@@ -5,6 +5,7 @@ import datetime
 import time
 
 import muon_generator
+import plot_functions
 
 description = ''
 options_parser = argparse.ArgumentParser(description = description)
@@ -27,11 +28,10 @@ if __name__ == '__main__' :
     x3, y3, mask, z = muon_generator.propagation_from_S1_to_S3(x1, y1, theta, phi)
     
     f = mask>0
-    
+    epsilon = numpy.sum(f)/N    
     data = numpy.vstack((x1, y1, theta, phi, x3, y3, f)).T    
-    epsilon = numpy.sum(f)/N 
-    print("x1, y1, theta, phi, x3, y3, flag \n", data) 
-            
+
+    print("x1, y1, theta, phi, x3, y3, flag \n", data)         
     print("Number of events hitting S3/Total number of events on S1:", numpy.sum(f), "/", N, "=", epsilon)
             
     if(output_file_events.endswith('.txt')): 
@@ -42,63 +42,13 @@ if __name__ == '__main__' :
       
     print("Time of execution: %s seconds " % (time.time() - start_time))
       
-#theta e phi     
-    plt.figure("Theta e phi")
-    plt.subplot(2, 2, 1)
-    plt.hist(theta, bins = int(numpy.sqrt(N)))
-    plt.xlabel("cos(theta)")
       
-    plt.subplot(2, 2, 2)
-    plt.hist(phi, bins = int(numpy.sqrt(N)))
-    plt.xlabel("phi")
-    
-    plt.subplot(2, 2, 3)
-    plt.hist(theta[f], bins = int(numpy.sqrt(N)))
-    plt.xlabel("cos(theta)")   
-
-    plt.subplot(2, 2, 4)
-    plt.hist(phi[f], bins = int(numpy.sqrt(N)))
-    plt.xlabel("phi")
-        
-#xs3
-    plt.figure("Muon position on scintillator 3 ")
-    plt.subplot(2, 2, 1)
-    plt.hist(x3,  bins = int(numpy.sqrt(len(theta))))
-    plt.xlabel("x_s3 [m]")
-  
-    plt.subplot(2, 2, 2)
-    plt.hist(y3* 10**2,  bins = int(numpy.sqrt(len(theta)))  )
-    plt.xlabel("y_s3 [cm]")  
-
-    plt.subplot(2, 2, 3)
-    plt.hist(x3[mask],  bins = int(numpy.sqrt(len(theta))))
-    plt.xlabel("x_s3 [m]")
-  
-    plt.subplot(2, 2, 4)
-    plt.hist(y3[mask]* 10**2,  bins = int(numpy.sqrt(len(theta)))  )
-    plt.xlabel("y_s3 [cm]")  
-
-#xs3
-    plt.figure("Muon position on scintillator 1 ")
-    plt.subplot(2, 2, 1)
-    plt.hist(x1,  bins = int(numpy.sqrt(len(theta))))
-    plt.xlabel("x_s3 [m]")
-  
-    plt.subplot(2, 2, 2)
-    plt.hist(y1* 10**2,  bins = int(numpy.sqrt(len(theta)))  )
-    plt.xlabel("y_s3 [cm]")  
-
-    plt.subplot(2, 2, 3)
-    plt.hist(x1[mask],  bins = int(numpy.sqrt(len(theta))))
-    plt.xlabel("x_s3 [m]")
-  
-    plt.subplot(2, 2, 4)
-    plt.hist(y1[mask]* 10**2,  bins = int(numpy.sqrt(len(theta)))  )
-    plt.xlabel("y_s3 [cm]")  
-
-#zeta
-
-    print("zeta è: ", z)
-    
+    plot_functions.multiple_histogram(theta, phi, "theta", "phi")  
+    plot_functions.multiple_histogram(theta[mask], phi[mask], "theta[mask]", "phi[mask]")       
+    plot_functions.multiple_histogram(x3, y3, "x3", "y3")      
+    plot_functions.multiple_histogram(x3[mask], y3[mask], "x3[mask]", "y3[mask]")  
+    plot_functions.multiple_histogram(x1, y1, "x1", "y1")      
+    plot_functions.multiple_histogram(x1[mask], y1[mask], "x1[mask]", "y1[mask]")  
+ 
     plt.ion()
     plt.show()

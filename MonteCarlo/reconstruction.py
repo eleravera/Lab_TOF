@@ -28,8 +28,9 @@ if __name__ == '__main__' :
 
     print("efficienza/tot:", numpy.sum(mask), len(mask))
     T1, T2, T12 = signal_propagation.DT_12(x1[mask], delay)
-    TOF = signal_propagation.Time_Of_Flight(x1[mask], x3[mask], beta[mask])
-    T13 = signal_propagation.DT_13(x1[mask], x3[mask], delay, beta[mask]) 
+    TOF = signal_propagation.Time_Of_Flight(x1[mask], x3[mask], 0., beta[mask]) #geometry.h_13
+    T13 = signal_propagation.DT_13(x1[mask], x3[mask], delay, TOF) 
+    T23 = signal_propagation.DT_23(x1[mask], x3[mask], delay, TOF) 
     n_bins = 50
     
     
@@ -45,11 +46,11 @@ if __name__ == '__main__' :
     plt.hist(x3[mask],  bins = n_bins)   
 
 
-    plt.figure("T12,T13")
+    plt.figure("T23,T13")
     plt.subplot(2, 1, 1)
-    plt.hist(T12,  bins = n_bins)
+    plt.hist(T23,  bins = n_bins, range= (22., 24))#T23.min(), T23.max()
     plt.subplot(2, 1, 2)   
-    plt.hist(T13,  bins = n_bins)   
+    plt.hist(T13, bins = n_bins, range= (22., 24))   
 
     plt.figure("TOF")
     plt.hist(TOF,  bins = n_bins, range= (0, 2.))
@@ -63,7 +64,7 @@ if __name__ == '__main__' :
     
     
 
-    T23 = signal_propagation.DT_23(x1[mask], x3[mask], delay, beta[mask]) 
+
     r, p = pearsonr(T23, T13)
     print("r, p T23 and T13:", r, p)
     

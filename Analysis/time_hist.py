@@ -7,6 +7,8 @@ import argparse
 import numpy
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
+from scipy.stats import pearsonr
+
 
 def gauss(x, norm, mean, sigma): 
   return (norm) * numpy.exp(-0.5 * ((x - mean)/sigma )**2)
@@ -58,8 +60,8 @@ print("integrale eventi <0.5", numpy.sum(maskera0))
 
 
 
-range_T23 = (10., 60.) # 35, 50.
-range_T13 = (10., 60.)
+range_T23 = (10., 25.) # 35, 50.
+range_T13 = (10., 25.)
 
 
 def T_hist_plot(t , xlabel, ylabel, range_t):
@@ -73,10 +75,12 @@ def T_hist_plot(t , xlabel, ylabel, range_t):
   p0 = [len(t), numpy.mean(t), 1.]
   mask = (n > 0.) 
   opt, pcov = curve_fit(gauss, bin_centers[mask], n[mask], sigma = numpy.sqrt(n[mask]), p0 = p0)    
-  print("Parametri del fit (norm, mean, sigma): %s" % opt)
+  print("Parametri del fit (norm, mean, sigma): %s +-%s" % (opt, numpy.sqrt(numpy.diagonal(pcov))))
   print("Matrice di covarianza:\n%s" % pcov) 
-  print("Incertezze:\n%s" % numpy.sqrt(numpy.diagonal(pcov))) 
-
+  print("Chi quadro: ")
+  
+  
+  
   bin_grid = numpy.linspace(*range_t, 1000)
   legend = ("norm: %f\nmean: %f\nsigma: %f" % tuple(opt))
   plt.plot(bin_grid, gauss(bin_grid, *opt), '-r', label = legend)    
@@ -91,6 +95,10 @@ plt.figure("t13T23")
 plt.plot(T23, T13, '.')
 plt.xlabel("T23 [ns]")
 plt.ylabel("T13 [ns]")
+
+
+r, p = pearsonr(T23, T13)
+print("r, p T23 and T13:", r, p)
 
 plt.ion() 
 plt.show()
