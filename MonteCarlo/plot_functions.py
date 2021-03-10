@@ -47,3 +47,13 @@ def multiple_histogram(var1, var2, xlabel1, xlabel2, bin_var = None, range_var1=
   plt.xlabel(xlabel2)
   n, bins, patches = plt.hist(var2,  bins = bin_var, range = range_var2)
   return   
+  
+  
+def scatter_plot(x, y, xlabel, ylabel):
+  plt.figure()
+  plt.plot(x, y, '.')
+  plt.xlabel(xlabel)
+  plt.xlim(x.min(), x.max())
+  plt.ylabel(ylabel)
+  plt.ylim(y.min(), y.max())  
+  return   

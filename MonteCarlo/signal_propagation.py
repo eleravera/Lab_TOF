@@ -1,5 +1,4 @@
 import numpy
-
 import geometry
 
 def Time_Of_Flight(x_s1, x_s3, z12, beta):
@@ -17,10 +16,8 @@ def DT_12(x_s1, delay):
 def DT_13(x_s1, x_s3, delay, TOF): 
   T_l1 = x_s1 * (10**9) / geometry.v_gamma #[ns]
   T_l3 =  0.#x_s3 * (10**9)/ geometry.v_gamma #[ns] 
-
   DT_13 = T_l3 + delay + TOF - T_l1
   return DT_13
-  
   
  
 def DT_23(x_s1, x_s3, delay, TOF): 
