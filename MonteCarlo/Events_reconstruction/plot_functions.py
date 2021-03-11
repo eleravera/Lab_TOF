@@ -13,25 +13,24 @@ def histogram(x, xlabel, bins = None, range = None, f=False):
   plt.xlabel(xlabel)
   n, bins, patches = plt.hist(x,  bins = bins, range = range)
 
-
   if(f is True): 
     bin_centers = 0.5 * (bins[1:] + bins[:-1]) 
-    p0 = [len(x), numpy.mean(x, 1.]
+    p0 = [len(x), numpy.mean(x), 1.]
     mask = (n > 0.) 
     opt, pcov = curve_fit(gauss, bin_centers[mask], n[mask], sigma = numpy.sqrt(n[mask]), p0 = p0)    
     print("Parametri del fit (norm, mean, sigma): %s +-%s" % (opt, numpy.sqrt(numpy.diagonal(pcov))))
     print("Matrice di covarianza:\n%s" % pcov) 
-    print("Chi quadro: ")
-  
+    print("Chi quadro: ")  
     bin_grid = numpy.linspace(*range, 1000)
     legend = ("norm: %f\nmean: %f\nsigma: %f" % tuple(opt))
     plt.plot(bin_grid, gauss(bin_grid, *opt), '-r', label = legend)        
     plt.legend() 
+    
   return 
   
 #Disegna due istogrammi in due subplot  
-def multiple_histogram(var1, var2, xlabel1, xlabel2, bin_var = None, range_var1= None, range_var2 = None ):
-  if(bin_var is None ): 
+def multiple_histogram(var1, var2, xlabel1, xlabel2, bins = None, range_var1= None, range_var2 = None ):
+  if(bins is None ): 
     bin_var = int(numpy.sqrt(len(var1)))
   if (range_var1 is None):
     range_var1 = (var1.min(), var1.max()) 
@@ -41,10 +40,10 @@ def multiple_histogram(var1, var2, xlabel1, xlabel2, bin_var = None, range_var1=
   plt.figure()
   plt.subplot(2, 1, 1)
   plt.xlabel(xlabel1)
-  n, bins, patches = plt.hist(var1,  bins = bin_var, range = range_var1)
+  n1, bins1, patches1 = plt.hist(var1,  bins = bins, range = range_var1)
   plt.subplot(2, 1, 2)
   plt.xlabel(xlabel2)
-  n, bins, patches = plt.hist(var2,  bins = bin_var, range = range_var2)
+  n2, bins2, patches2 = plt.hist(var2,  bins = bins, range = range_var2)
   return   
   
 #Disegna lo scatter plot di due variabili  
