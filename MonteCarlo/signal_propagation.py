@@ -1,31 +1,52 @@
+""" Funzioni necessarie per simulare la propagazione dei fotoni all'interno dello scintillatore e di conseguenza calcolare i Delta T misurati tra i vari PMT """
+
 import numpy
 import geometry
 
-def Time_Of_Flight(x_s1, x_s3, z12, beta):
-  TOF = (numpy.sqrt((x_s1-x_s3)**2 + (geometry.Z1/2+geometry.Z3/2 + z12)**2) * (10**9) / (beta*geometry.c)) #[s]
+
+#Data la velocità e la posizioni di partenza del muone sullo scintillatore 1 e di arrivo sullo scintillatore 3 calcola il tempo di volo (ns)
+def Time_Of_Flight(x_s1, x_s3, y_s1, y_s3, z12, beta):
+  dx = x_s1 - x_s3
+  dy = y_s1 - y_s3
+  dz = (geometry.Z1 + geometry.Z3)*0.5 + z12  
+  TOF = numpy.sqrt(dx**2 + dy**2 + dz**2) / (beta*geometry.c)
+  TOF = TOF * (10**9) #[ns]
   return TOF
 
-"""Propagazione dei fotoni dentro lo scintillatore """
+#Calcola la differenza di tempo tra l'arrivo del segnale nel PMT1 e nel PMT2 (il ritardo si applica al PMT2)
 def DT_12(x_s1, delay): 
-  T_r = (geometry.X1 - x_s1) * (10**9) / geometry.v_gamma #[ns]
-  T_l = x_s1 * (10**9) / geometry.v_gamma #[ns]
-  DT_12 = T_r - T_l + delay
-  return T_l, T_r, DT_12
+  T_r = (geometry.X1 - x_s1) / geometry.v_gamma 
+  T_l = x_s1 / geometry.v_gamma 
+  res = resolution(len(x_s1)) 
+  Delta_T = (T_r - T_l) * (10**9) #[ns]
   
+  DT_12 = Delta_T + delay + res
+  return DT_12
   
+#Calcola la differenza di tempo tra l'arrivo del segnale nel PMT1 e nel PMT3 (il ritardo si applica al PMT3)
 def DT_13(x_s1, x_s3, delay, TOF): 
-  T_l1 = x_s1 * (10**9) / geometry.v_gamma #[ns]
-  T_l3 =  0.#x_s3 * (10**9)/ geometry.v_gamma #[ns] 
-  DT_13 = T_l3 + delay + TOF - T_l1
+  T_l1 = x_s1  / geometry.v_gamma 
+  T_l3 =  0.#x_s3 * (10**9)/ geometry.v_gamma 
+  res = resolution(len(x_s1))
+  Delta_T = (T_l3 - T_l1) * (10**9) #[ns]   
+  DT_13 = Delta_T + delay + TOF + res
   return DT_13
   
- 
+#Calcola la differenza di tempo tra l'arrivo del segnale nel PMT2 e nel PMT3 (il ritardo si applica al PMT3) 
 def DT_23(x_s1, x_s3, delay, TOF): 
-  T_l2 = (geometry.X1 - x_s1) * (10**9) / geometry.v_gamma #[ns]
-  T_l3 =  0.#x_s3 * (10**9)/ geometry.v_gamma #[ns] 
-  DT_23 = T_l3 + delay + TOF - T_l2
-  
-  print("Tl2", T_l2)
-  print("Tl3", T_l3)  
+  T_l2 = (geometry.X1 - x_s1)  / geometry.v_gamma 
+  T_l3 =  0.#x_s3 * (10**9)/ geometry.v_gamma 
+  res = resolution(len(x_s1)) 
+  Delta_T = (T_l3 - T_l2) * (10**9) #[ns]     
+  DT_23 = Delta_T + delay + TOF + res
   return DT_23
+  
+
+#Genera un numero casuale con distribuzione gaussiana con media 0 e sigma 1 ns, da applicare poi ad ogni segnale per simulare la risoluzione
+def resolution(N):
+  sigma_t = numpy.random.normal(0., 1., N)
+  print("risoluzione:", sigma_t)  
+  return sigma_t   
+  
+  
   

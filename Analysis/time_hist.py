@@ -37,9 +37,10 @@ print("\n%d events recorded in %f s\nRate: %f Hz\n" % (len(t), t_run, len(t)/t_r
 print("T23 max:", T23.max())
 print("T13 max:", T13.max())
 
-""" Saturazione FPGA """
+#Saturazione FPGA
 mask1 = T23 > 3.2
 mask2 = T13 > 3.2
+
 
 print("rate eventi T23 sopra soglia", numpy.sum(mask1)/t_run)
 print("rate eventi t13 sopra soglia",numpy.sum(mask2)/t_run)
@@ -50,7 +51,6 @@ print("t1 sopra soglia", 20 *numpy.sum(mask2)/t_run)
 
 print("Frazione di eventi sopra soglia: %f., %f." % (numpy.sum(mask1)/len(t), numpy.sum(mask2)/len(t)))
 """Istogramma"""
-n_bins = 45 #int(numpy.sqrt(len(T23))) 
 T23 = T23 * scale/10 #ns
 T13 = T13 * scale/10 
 print("MASSIMI", T23.max(), T13.max())
@@ -58,10 +58,9 @@ print("MASSIMI", T23.max(), T13.max())
 maskera0 = T23 < 0.5
 print("integrale eventi <0.5", numpy.sum(maskera0))
 
-
-
-range_T23 = (10., 25.) # 35, 50.
-range_T13 = (10., 25.)
+n_bins = 45 #int(numpy.sqrt(len(T23))) 
+range_T23 = (0., 50.) # 35, 50.
+range_T13 = (0., 40.)
 
 
 def T_hist_plot(t , xlabel, ylabel, range_t):
@@ -79,26 +78,36 @@ def T_hist_plot(t , xlabel, ylabel, range_t):
   print("Matrice di covarianza:\n%s" % pcov) 
   print("Chi quadro: ")
   
-  
-  
   bin_grid = numpy.linspace(*range_t, 1000)
   legend = ("norm: %f\nmean: %f\nsigma: %f" % tuple(opt))
   plt.plot(bin_grid, gauss(bin_grid, *opt), '-r', label = legend)    
   plt.legend() 
   return 
-
+  
 
 T_hist_plot(T23, "T_23 [ns]", "dN/dT_23", range_T23)
 T_hist_plot(T13, "T_13 [ns]", "dN/dT_13", range_T13)
 
+
 plt.figure("t13T23")
-plt.plot(T23, T13, '.')
+plt.hist2d(T23, T13, bins=100 )
+plt.colorbar()
 plt.xlabel("T23 [ns]")
 plt.ylabel("T13 [ns]")
 
+plt.figure()
+plt.plot(T23, T13, '.')
+plt.xlabel("T23")
+plt.ylabel("T13")
 
 r, p = pearsonr(T23, T13)
 print("r, p T23 and T13:", r, p)
+T = (T13+T23)*0.5
+
+
+range_T = (5.,  40.)
+T_hist_plot(T, "T23+T13[ns]", "dN/dT", range_T )
+
 
 plt.ion() 
 plt.show()
