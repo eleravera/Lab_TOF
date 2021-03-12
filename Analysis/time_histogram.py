@@ -3,6 +3,10 @@
     nel PM1 e il PM2 e tra PM1 e PM3. 
     Per lanciare il programma scrivere su terminale 'python3 -i time_hist.py -f <nome_file.dat>'
 """
+import sys
+sys.path.insert(1, '/home/testaovo/Scrivania/LABORATORIO/TOF/Lab_TOF')
+
+
 import argparse 
 import numpy
 import matplotlib.pyplot as plt

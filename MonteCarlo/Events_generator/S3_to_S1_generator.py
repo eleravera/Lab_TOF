@@ -30,8 +30,8 @@ if __name__ == '__main__' :
 
 
     #Stampa i dati su terminale
-    data = numpy.vstack((x1, y1*100, theta, phi, x3, y3*100, f)).T  
-    print("x1[m], y1[cm], theta, phi, x3[m], y3[cm], flag \n", data)
+    data = numpy.vstack((x1, y1, theta, phi, x3, y3, f)).T  
+    print("x1[m], y1[m], theta, phi, x3[m], y3[m], flag \n", data)
 
     #Calcolo l'accettanza    
     epsilon = numpy.sum(f)/N            
@@ -40,9 +40,9 @@ if __name__ == '__main__' :
 
     #Se passato un file di uscita scrive i dati su file                
     if(output_file_events.endswith('.txt')): 
-      header ='%s\nx_input = %d \nE[MeV], P[MeV], beta, x1[m], y1[cm], theta, phi, x3[m], y3[cm], flag\n' % (datetime.datetime.now() , x)
-      fmt = ['%.4f', '%.4f', '%.4f', '%.4f', '%.4f', '%.2f', '%.2f', '%.4f', '%.4f', '%d']
-      numpy.savetxt(output_file_events, numpy.transpose([E, P, beta, x1, y1*100, theta, phi, x3, y3*100, f]) , fmt=fmt, header=header)
+      header ='%s\nx_input = %d \nE[MeV], P[MeV], beta, x1[m], y1[m], theta, phi, x3[m], y3[m], flag\n' % (datetime.datetime.now() , x)
+      fmt = ['%.4f', '%.4f', '%.4f', '%.4f', '%.6f', '%.2f', '%.2f', '%.4f', '%.6f', '%d']
+      numpy.savetxt(output_file_events, numpy.transpose([E, P, beta, x1, y1, theta, phi, x3, y3, f]) , fmt=fmt, header=header)
       print("Output file saved!\n\n")
 
 

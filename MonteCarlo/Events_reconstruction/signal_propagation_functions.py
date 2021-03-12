@@ -1,4 +1,7 @@
 """ Funzioni necessarie per simulare la propagazione dei fotoni all'interno dello scintillatore e di conseguenza calcolare i Delta T misurati tra i vari PMT """
+import sys
+sys.path.insert(1, '/home/testaovo/Scrivania/LABORATORIO/TOF/Lab_TOF')
+
 
 import numpy
 import geometry

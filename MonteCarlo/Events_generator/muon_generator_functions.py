@@ -1,3 +1,7 @@
+import sys
+sys.path.insert(1, '/home/testaovo/Scrivania/LABORATORIO/TOF/Lab_TOF')
+
+
 import numpy
 import matplotlib.pyplot as plt
 import scipy.integrate as integrate

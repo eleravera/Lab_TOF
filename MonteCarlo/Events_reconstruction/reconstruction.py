@@ -2,11 +2,14 @@ import numpy
 import matplotlib.pyplot as plt
 import argparse 
 from scipy.stats import pearsonr
+import sys
 
+sys.path.insert(1, '/home/testaovo/Scrivania/LABORATORIO/TOF/Lab_TOF')
 
+import plot_functions
 import geometry
 import signal_propagation_functions
-import plot_functions
+
 
 description = ''
 options_parser = argparse.ArgumentParser(description = description)
