@@ -6,107 +6,69 @@
 import argparse 
 import numpy
 import matplotlib.pyplot as plt
-from scipy.optimize import curve_fit
 from scipy.stats import pearsonr
 
+import plot_functions
 
-def gauss(x, norm, mean, sigma): 
-  return (norm) * numpy.exp(-0.5 * ((x - mean)/sigma )**2)
-
-
-"""Da terminale si da in input il file di acquisizione"""
+#Opzioni da terminale: input file e fondo scala della tac
 description = ''
 options_parser = argparse.ArgumentParser(description = description)
-options_parser.add_argument('-input_file', '-f', type=str, help='File di acquisizione')
-options_parser.add_argument('-fondo_scala', '-s', type=int, help='')
+options_parser.add_argument('-input_file', '-f', type=str, required = True, help='Input file')
+options_parser.add_argument('-full_scale', '-s', default = 200, type=int, help='TAC s full scale')
 
 options = vars(options_parser.parse_args())  
 input_file = options['input_file']
-scale = options['fondo_scala']
+scale = options['full_scale']
 
-t, T23,  T13  = numpy.loadtxt(input_file, unpack = True)
-t_run = t.max() -t.min()
+#Legge il file dati.
+t, ch0,  ch1  = numpy.loadtxt(input_file, unpack = True)
 
+#Calcola il rate degli eventi
 Delta_t = numpy.ediff1d(t)
 mask_t = Delta_t < 0
-print("quante volte il clock riparte:" , numpy.sum(mask_t))
-t_run = t.max() -t.min() +  numpy.sum(mask_t) * 6514
+t_run = t.max() -t.min() +  numpy.sum(mask_t) * 6549
+print("Il clock dell'FPGA è ripartito %d volte durante l'acquisizione:" % numpy.sum(mask_t) )
+print("\n%d Events recorded in %f s\nRate: %f Hz\n" % (len(t), t_run, len(t)/t_run) )
 
 
-print("\n%d events recorded in %f s\nRate: %f Hz\n" % (len(t), t_run, len(t)/t_run) )
-print("T23 max:", T23.max())
-print("T13 max:", T13.max())
+#Cotrolla se ci sono eventi che hanno saturato l'FPGA
+saturation_ch0_mask = ch0 > 3.2
+saturation_ch1_mask = ch1 > 3.2
 
-#Saturazione FPGA
-mask1 = T23 > 3.2
-mask2 = T13 > 3.2
-
-
-print("rate eventi T23 sopra soglia", numpy.sum(mask1)/t_run)
-print("rate eventi t13 sopra soglia",numpy.sum(mask2)/t_run)
-
-print("t1 sopra soglia", 20 * numpy.sum(mask1)/t_run)
-print("t1 sopra soglia", 20 *numpy.sum(mask2)/t_run)
+print("Rate di eventi sopra soglia sul ch0:", numpy.sum(saturation_ch0_mask)/t_run)
+print("Rate di eventi sopra soglia sul ch1:", numpy.sum(saturation_ch1_mask)/t_run)
+print("Frazione di eventi sopra soglia: %f., %f.\n\n" % (numpy.sum(saturation_ch0_mask)/len(t), numpy.sum(saturation_ch1_mask)/len(t)))
 
 
-print("Frazione di eventi sopra soglia: %f., %f." % (numpy.sum(mask1)/len(t), numpy.sum(mask2)/len(t)))
-"""Istogramma"""
-T23 = T23 * scale/10 #ns
-T13 = T13 * scale/10 
-print("MASSIMI", T23.max(), T13.max())
 
-maskera0 = T23 < 0.5
-print("integrale eventi <0.5", numpy.sum(maskera0))
+#Analisi: ATTENZIONE BISOGNA ASSEGNARE I CANALI CORRETTAMENTE:
+T23 = ch0 
+T13 = ch1
 
-n_bins = 45 #int(numpy.sqrt(len(T23))) 
+T23 = T23 * scale/10 #[ns]
+T13 = T13 * scale/10 #[ns]
+
+
+bins = 45 #int(numpy.sqrt(len(T23))) 
 range_T23 = (0., 50.) # 35, 50.
 range_T13 = (0., 40.)
 
+plot_functions.histogram(T23, "T_23 [ns]", "dN/dT_23", bins , range = range_T23, f = True)
+plot_functions.histogram(T13, "T_13 [ns]", "dN/dT_13", bins = bins, range = range_T13 , f = True)
+plot_functions.hist2d(T23, T13, "T23 [ns]", "T13 [ns]", bins=None, range_x = range_T23, range_y = range_T13 )
 
-def T_hist_plot(t , xlabel, ylabel, range_t):
-  n_bins = 45 #int(numpy.sqrt(len(T23))) 
-  plt.figure()
-  plt.xlabel(xlabel)
-  plt.ylabel(ylabel)
-  n, bins, patches = plt.hist(t,  bins = n_bins, range = range_t)
-  bin_centers = 0.5 * (bins[1:] + bins[:-1])
-
-  p0 = [len(t), numpy.mean(t), 1.]
-  mask = (n > 0.) 
-  opt, pcov = curve_fit(gauss, bin_centers[mask], n[mask], sigma = numpy.sqrt(n[mask]), p0 = p0)    
-  print("Parametri del fit (norm, mean, sigma): %s +-%s" % (opt, numpy.sqrt(numpy.diagonal(pcov))))
-  print("Matrice di covarianza:\n%s" % pcov) 
-  print("Chi quadro: ")
-  
-  bin_grid = numpy.linspace(*range_t, 1000)
-  legend = ("norm: %f\nmean: %f\nsigma: %f" % tuple(opt))
-  plt.plot(bin_grid, gauss(bin_grid, *opt), '-r', label = legend)    
-  plt.legend() 
-  return 
-  
-
-T_hist_plot(T23, "T_23 [ns]", "dN/dT_23", range_T23)
-T_hist_plot(T13, "T_13 [ns]", "dN/dT_13", range_T13)
-
-
-plt.figure("t13T23")
-plt.hist2d(T23, T13, bins=100 )
-plt.colorbar()
-plt.xlabel("T23 [ns]")
-plt.ylabel("T13 [ns]")
-
-plt.figure()
-plt.plot(T23, T13, '.')
-plt.xlabel("T23")
-plt.ylabel("T13")
-
+plot_functions.scatter_plot(T23, T13, "T23[ns]", "T13[ns]")
 r, p = pearsonr(T23, T13)
 print("r, p T23 and T13:", r, p)
-T = (T13+T23)*0.5
 
+
+#Distribuzione del TOF 
+T = (T13+T23) * 0.5
 
 range_T = (5.,  40.)
-T_hist_plot(T, "T23+T13[ns]", "dN/dT", range_T )
+plot_functions.histogram(T, "T23+T13[ns]", "dN/dT", bins = bins, range = range_T, f = True)
+
+
 
 
 plt.ion() 

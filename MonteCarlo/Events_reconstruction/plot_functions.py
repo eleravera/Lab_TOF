@@ -1,9 +1,15 @@
-""" Funzioni utili per fare plot, in particolare istogrammi e scatter plot """
+""" Funzioni utili per fare plot"""
+
 import numpy
 import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
+
+def gauss(x, norm, mean, sigma): 
+  return (norm) * numpy.exp(-0.5 * ((x - mean)/sigma )**2)
+
 
 #Disegna un istogramma e se attiva la flag ne fa il fit
-def histogram(x, xlabel, bins = None, range = None, f=False):
+def histogram(x, xlabel, ylabel, bins = None, range = None, f=False):
   if(bins is None ): 
     bins = int(numpy.sqrt(len(x)))
   if (range is None):
@@ -58,12 +64,20 @@ def scatter_plot(x, y, xlabel, ylabel):
   return   
 
 #Disegna l'istogramma 2D di due variabili  
-def hist2d(x, y, xlabel, ylabel, bins=None, ):
+def hist2d(x, y, xlabel, ylabel, bins=None, range_x = None, range_y = None):
   plt.figure()
+  if (range_x is None):
+    range_x = (x.min(), x.max()) 
+  if (range_y is None):
+    range_y = (y.min(), y.max())   
+   
   if(bins is None ): 
     bins = int(numpy.sqrt(len(x))) 
   plt.hist2d(x, y,  bins=bins )  
   plt.xlabel(xlabel)
+  plt.ylabel(ylabel)
+  plt.colorbar()
+  return   
   plt.ylabel(ylabel)
   plt.colorbar()
   return   

@@ -15,8 +15,7 @@ options_parser.add_argument('-input_file', '-f', type=str, help='File di acquisi
 options = vars(options_parser.parse_args())  
 input_file = options['input_file']
 
-
-t, T12,  T13  = numpy.loadtxt(input_file, unpack = True)
+t, T23,  T13  = numpy.loadtxt(input_file, unpack = True)
 t_run = t.max() -t.min()
 print("\n%d events recorded in %f s\nRate: %f Hz\n" % (len(t), t_run, len(t)/t_run) )
 
@@ -27,7 +26,6 @@ n_bins = 45
 plt.figure("Time distribution")  
 n, bins, patches = plt.hist(Delta_t,  bins = n_bins, range = (0., Delta_t.max()))
 bin_centers = 0.5 * (bins[1:] + bins[:-1])
-#p0 = [Delta, numpy.mean(t), 2.]
 mask = (n > 0.)
 opt, pcov = curve_fit(exponential, bin_centers[mask], n[mask], sigma = numpy.sqrt(n[mask]))    
 print("fit parameters (amplitude, rate): %s" % opt)

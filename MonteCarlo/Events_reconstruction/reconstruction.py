@@ -58,7 +58,7 @@ if __name__ == '__main__' :
     plot_functions.multiple_histogram(T13, T23, "T13", "T23", bins=45)       
     plot_functions.scatter_plot(T12, T13, "T12 [ns]", "T13 [ns]")
     plot_functions.scatter_plot(T23, T13, "T23 [ns]", "T13 [ns]")  
-    plot_functions.histogram(TOF, "TOF [ns]", bins=45, range = (5., 14.))   
+    plot_functions.histogram(TOF, "TOF [ns]", "dN/dTOF", bins=45, range = (5., 14.))   
     plot_functions.hist2d(T23, T13, "T23", "T13") 
     
     #Correlazione:
