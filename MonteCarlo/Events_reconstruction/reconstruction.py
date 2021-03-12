@@ -49,7 +49,7 @@ if __name__ == '__main__' :
 
     #Calcola i tempi di propagazione dei fotoni dentro la barra scintillante
     T12 = signal_propagation_functions.DT_12(x1[mask], delay)
-    print("z13:", z_13)
+
     
     TOF = signal_propagation_functions.Time_Of_Flight(x1[mask], x3[mask], y1[mask], y3[mask], z_13, beta[mask])   
     T13 = signal_propagation_functions.DT_13(x1[mask], x3[mask], delay, TOF) 

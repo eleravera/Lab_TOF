@@ -57,10 +57,10 @@ def position_on_S3_generator( N_events, x):
 
 """Calcola la posizione sul piano dello scintillatore 1 partendo dallo scintillatore 3 quando questo sta sopra l'1"""
 def propagation_from_S3_to_S1(x_s3, y_s3, theta_muon, phi_muon):
-  z = (geometry.Z1/2 + geometry.Z3/2 )
+  z = (geometry.Z1 + geometry.Z3 ) * 0.5
   x_s1 = x_s3 + numpy.cos(phi_muon) * numpy.tan(theta_muon) * z
   y_s1 = y_s3 + numpy.sin(phi_muon) * numpy.tan(theta_muon) * z     
-  mask = ((x_s1 > 0.) * (x_s1 < geometry.X1) * (y_s1 < geometry.Y1/2) * (y_s1 > -geometry.X1/2))
+  mask = ((x_s1 > 0.) * (x_s1 < geometry.X1) * (y_s1 < geometry.Y1/2) * (y_s1 > -geometry.Y1/2))
   return x_s1, y_s1, mask 
 
 

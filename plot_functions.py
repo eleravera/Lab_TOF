@@ -37,7 +37,7 @@ def histogram(x, xlabel, ylabel, bins = None, range = None, f=False):
 #Disegna due istogrammi in due subplot  
 def multiple_histogram(var1, var2, xlabel1, xlabel2, bins = None, range_var1= None, range_var2 = None ):
   if(bins is None ): 
-    bin_var = int(numpy.sqrt(len(var1)))
+    bins = int(numpy.sqrt(len(var1)))
   if (range_var1 is None):
     range_var1 = (var1.min(), var1.max()) 
   if (range_var2 is None):
