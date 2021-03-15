@@ -20,7 +20,7 @@ if __name__ == '__main__' :
     output_file_events = options['output_File_events']
      
     #Genero un muone con le funzioni di muon_generator_functions nella configurazione con scintillatore 3 sotto la barra       
-    E, P, beta = muon_generator_functions.muon_energy_generator(N) 
+    E, P, beta = muon_generator_functions.muon_energy_generator(N, muon_generator_functions.distr_energy, 1., 1.e3) 
     theta, phi = muon_generator_functions.muon_angle_generator(N, muon_generator_functions.dist_theta)
     
     x1, y1 = muon_generator_functions.position_on_S1_generator(N) 
@@ -30,9 +30,8 @@ if __name__ == '__main__' :
     
     #Stampa i dati su terminale
     data = numpy.vstack((x1, y1, theta, phi, x3, y3, f)).T    
-    print("x1, y1, theta, phi, x3, y3, flag \n", data)         
-
-
+    print("x1, y1, theta, phi, x3, y3, flag \n", data)             
+       
     #Calcolo l'accettanza
     epsilon = numpy.sum(f)/N    
     print("Number of events hitting S3/Total number of events on S1:", numpy.sum(f), "/", N, "=", epsilon)

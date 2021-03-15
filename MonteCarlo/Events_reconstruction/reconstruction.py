@@ -47,13 +47,14 @@ if __name__ == '__main__' :
       plot_functions.multiple_histogram(x1[mask], y1[mask], "x1[mask]", "y1[mask]", bins=45)  
  
 
+    res = None
     #Calcola i tempi di propagazione dei fotoni dentro la barra scintillante
-    T12 = signal_propagation_functions.DT_12(x1[mask], delay)
+    T12 = signal_propagation_functions.DT_12(x1[mask], delay, res)
 
     
     TOF = signal_propagation_functions.Time_Of_Flight(x1[mask], x3[mask], y1[mask], y3[mask], z_13, beta[mask])   
-    T13 = signal_propagation_functions.DT_13(x1[mask], x3[mask], delay, TOF) 
-    T23 = signal_propagation_functions.DT_23(x1[mask], x3[mask], delay, TOF) 
+    T13 = signal_propagation_functions.DT_13(x1[mask], x3[mask], delay, TOF, res) 
+    T23 = signal_propagation_functions.DT_23(x1[mask], x3[mask], delay, TOF, res) 
 
     #Plot sui Delta T misurati 
     plot_functions.multiple_histogram(x1[mask], x3[mask], "x1[mask]", "x3[mask]", bins=45)
@@ -61,7 +62,7 @@ if __name__ == '__main__' :
     plot_functions.multiple_histogram(T13, T23, "T13", "T23", bins=45)       
     plot_functions.scatter_plot(T12, T13, "T12 [ns]", "T13 [ns]")
     plot_functions.scatter_plot(T23, T13, "T23 [ns]", "T13 [ns]")  
-    plot_functions.histogram(TOF, "TOF [ns]", "dN/dTOF", bins=45, range = (5., 14.))   
+    plot_functions.histogram(TOF, "TOF [ns]", "dN/dTOF", bins=100, range = (6., 90.))   
     plot_functions.hist2d(T23, T13, "T23", "T13") 
     
     #Correlazione:

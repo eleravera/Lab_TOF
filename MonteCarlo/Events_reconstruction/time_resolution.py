@@ -9,6 +9,7 @@ from scipy.interpolate import interp1d
      
 import geometry
 import plot_functions
+import signal_propagation_functions
 
 description = ''
 options_parser = argparse.ArgumentParser(description = description)
@@ -32,12 +33,12 @@ if __name__ == '__main__' :
       plot_functions.multiple_histogram(x3[mask], y3[mask], "x3[mask]", "y3[mask]", bins=45)  
       plot_functions.multiple_histogram(x1, y1, "x1", "y1", bins=45)      
       plot_functions.multiple_histogram(x1[mask], y1[mask], "x1[mask]", "y1[mask]", bins=45)  
- 
 
-
-    #Forse meglio convertirli in tempi
-    plot_functions.histogram(x1, "x1 [m]", "dN/dx", bins = None, range = None, f = True)
+    TOF = signal_propagation_functions.Time_Of_Flight(x1, x3, y1, y3, 0., beta)
+    T13 = signal_propagation_functions.DT_13(x1, x3, 30., TOF) 
+    plot_functions.histogram(T13, "T13 [m]", "dN/dT13", bins = None, range = None, f = True)
     
+    """
     plt.figure()
     n, bins, patches = plt.hist(x1, bins = int(numpy.sqrt(len(x1))) , range = (0., 2.9))
     bin_centers = 0.5 * (bins[1:] + bins[:-1])
@@ -45,7 +46,7 @@ if __name__ == '__main__' :
 
     x_new = numpy.linspace(bin_centers.min(), bin_centers.max(), 1000, endpoint = True)    
     plt.plot(x_new, polynomial_f(x_new), '-')
-    
+    """
  
  
  

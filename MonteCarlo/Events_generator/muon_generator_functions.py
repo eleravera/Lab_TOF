@@ -12,17 +12,17 @@ import geometry
 
 MUON_MASS = 105. #MeV
 
-"Distribuzione in theta dei muoni: va come cos^2"
+#Distribuzione dei muoni in theta
 def dist_theta(theta):
-    return (1/numpy.pi) * (numpy.cos(theta))**2
+  return (1/numpy.pi) * (numpy.cos(theta))**2
+
+#Spettro in energia dei raggi cosmici
+def distr_energy(E): 
+  return 1. / (E)**2.7   
+
 
 """ Genero muoni nell'angolo solido"""
-def muon_angle_generator(N_events, pdf): 
-  
-  #theta_muon_1= numpy.random.uniform(-numpy.pi/2, -0.5*numpy.pi+0.1, int(N_events/2) ) 
-  #theta_muon_2= numpy.random.uniform(numpy.pi*0.5-0.1, numpy.pi*0.5, int(N_events/2) )
-  #theta_muon = numpy.concatenate((theta_muon_1, theta_muon_2))
-      
+def muon_angle_generator(N_events, pdf):      
   theta = numpy.linspace(-numpy.pi, +numpy.pi, 200) 
   cdf_y  = []
   for i in range(len(theta)):
@@ -36,15 +36,25 @@ def muon_angle_generator(N_events, pdf):
   theta_muon = funzione(x)
   
   phi_muon = numpy.random.uniform(0, 2 * numpy.pi, N_events )   
-   
   return theta_muon, phi_muon
 
 
 """ Spettro piatto; energie tra 106 e 1000 MeV. Poi bisognerà cambiare e mettere lo spettro vero e proprio"""
-def muon_energy_generator( N_events ): 
-  E_muon = numpy.random.uniform(305., 10000, N_events) 
+def muon_energy_generator(N_events, pdf, xmin, xmax): 
+  e = numpy.linspace(xmin, xmax, 1000)  
+  cdf_y  = numpy.full(len(e), 0.)
+  for i in range(len(e)):
+    y, rest = quad(pdf, e[0], e[i])
+    cdf_y[i] = y       
+  cdf_y, unique_indices = numpy.unique(cdf_y, return_index=True)
+  cdf_y = cdf_y/cdf_y[-1]
+  e = e[unique_indices]  
+  ppf_spline = interp1d(cdf_y, e)         
+  x = numpy.random.uniform(0., 1., N_events)
+  E_kin = ppf_spline(x)  
+  E_muon = E_kin + MUON_MASS
   P_muon = numpy.sqrt( E_muon**2 - MUON_MASS **2)
-  beta_muon = P_muon / E_muon    
+  beta_muon = P_muon / E_muon
   return E_muon, P_muon, beta_muon
 
   
@@ -82,10 +92,3 @@ def propagation_from_S1_to_S3(x_s1, y_s1, theta_muon, phi_muon):
   mask = ((x_s3 > (geometry.X1-geometry.X3)*0.5) * (x_s3 < (geometry.X1+geometry.X3)*0.5) * (y_s3<geometry.Y3/2) * (y_s3>-geometry.Y3/2))  
   return x_s3, y_s3, mask, z
   
-
-
-
-
-  
-
-

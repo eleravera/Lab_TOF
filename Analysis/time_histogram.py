@@ -7,6 +7,7 @@ import sys
 sys.path.insert(1, '/home/testaovo/Scrivania/LABORATORIO/TOF/Lab_TOF')
 
 
+
 import argparse 
 import numpy
 import matplotlib.pyplot as plt
@@ -30,7 +31,10 @@ t, ch0,  ch1  = numpy.loadtxt(input_file, unpack = True)
 #Calcola il rate degli eventi
 Delta_t = numpy.ediff1d(t)
 mask_t = Delta_t < 0
-t_run = t.max() -t.min() +  numpy.sum(mask_t) * 6549
+#t_switch = t[:-1][mask_t]
+#print(t_switch)
+t_run = t.max() -t.min() +  numpy.sum(mask_t) * 6553.6
+
 print("Il clock dell'FPGA è ripartito %d volte durante l'acquisizione:" % numpy.sum(mask_t) )
 print("\n%d Events recorded in %f s\nRate: %f Hz\n" % (len(t), t_run, len(t)/t_run) )
 
@@ -54,7 +58,7 @@ T13 = T13 * scale/10 #[ns]
 
 
 bins = 45 #int(numpy.sqrt(len(T23))) 
-range_T23 = (0., 50.) # 35, 50.
+range_T23 = (0., 40.) # 35, 50.
 range_T13 = (0., 40.)
 
 plot_functions.histogram(T23, "T_23 [ns]", "dN/dT_23", bins , range = range_T23, f = True)
@@ -65,12 +69,16 @@ plot_functions.scatter_plot(T23, T13, "T23[ns]", "T13[ns]")
 r, p = pearsonr(T23, T13)
 print("r, p T23 and T13:", r, p)
 
+plot_functions.fit2gauss(T13, "T_13 [ns]", "dN/dT_13", bins , range = range_T13, f = True)
 
 #Distribuzione del TOF 
-T = (T13+T23) * 0.5
+cost = 30.
+TOF = (T13+T23) * 0.5 + cost
+range_TOF = (5.,  90.)
+plot_functions.histogram(TOF, "T23+T13[ns]", "dN/dT", bins = bins, range = range_TOF, f = True)
 
-range_T = (5.,  40.)
-plot_functions.histogram(T, "T23+T13[ns]", "dN/dT", bins = bins, range = range_T, f = True)
+
+
 
 
 
