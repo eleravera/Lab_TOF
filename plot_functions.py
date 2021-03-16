@@ -5,40 +5,35 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 from scipy.stats import chisquare
 
-def gauss(x, norm, mean, sigma): 
-  return (norm) * numpy.exp(-0.5 * ((x - mean)/sigma )**2)
-  
-def line(x, m , q):
-  return m * x +q
-
-def two_gauss(x, a, norm, mean1, sigma1, mean2, sigma2):
-  return a * gauss(x, norm, mean1, sigma1) + (1-a) * gauss(x, norm, mean2, sigma2)
+import fit_functions
 
 
 #Disegna un istogramma e se attiva la flag ne fa il fit
-def histogram(x, xlabel, ylabel, bins = None, range = None, f=False):
+def histogram(x, xlabel, ylabel, bins = None, range = None, f=False, density = False):
   if(bins is None ): 
     bins = int(numpy.sqrt(len(x)))
   if (range is None):
    range = (x.min(), x.max()) 
   plt.figure()
   plt.xlabel(xlabel)
-  n, bins, patches = plt.hist(x,  bins = bins, range = range)
+  n, bins, patches = plt.hist(x,  bins = bins, range = range, density = density)
   if(f is True): 
     bin_centers = 0.5 * (bins[1:] + bins[:-1]) 
     p0 = [len(x), numpy.mean(x), 1.]
     mask = (n > 0.) 
-    opt, pcov = curve_fit(gauss, bin_centers[mask], n[mask], sigma = numpy.sqrt(n[mask]), p0 = p0)    
-    print("\n\nFIT CON UNA GAUSSIANA\n")
-    print("Parametri del fit (norm, mean, sigma): %s +-%s" % (opt, numpy.sqrt(numpy.diagonal(pcov))))
-    print("Matrice di covarianza:\n%s" % pcov) 
-    chi2, p = chisquare(n[mask], gauss(bin_centers[mask], *opt) )
+    opt, pcov = curve_fit(fit_functions.gauss, bin_centers[mask], n[mask], sigma = numpy.sqrt(n[mask]), p0 = p0)    
+    results = ''
+    for v, dv in zip(opt, pcov.diagonal()):
+        results += '%f +- %f\n' % (v, numpy.sqrt(dv))
+    print('Parametri fit con una gaussiana:\n%s' % results)
+    chi2 = (n[mask] - fit_functions.gauss(bin_centers[mask], *opt))**2 / n[mask]
+    chi2 = chi2.sum()
     print("Chi quadro/ndof: ", chi2, len(n[mask]))  
     bin_grid = numpy.linspace(*range, 1000)
     legend = ("norm: %f\nmean: %f\nsigma: %f" % tuple(opt))
-    plt.plot(bin_grid, gauss(bin_grid, *opt), '-r', label = legend)        
+    plt.plot(bin_grid, fit_functions.gauss(bin_grid, *opt), '-r', label = legend)        
     plt.legend() 
-  return 
+  return opt, pcov
 
 #Disegna un istogramma e se attiva la flag ne fa il fit con due gaussiane 
 def fit2gauss(x, xlabel, ylabel, bins = None, range = None, f=False):
@@ -51,19 +46,20 @@ def fit2gauss(x, xlabel, ylabel, bins = None, range = None, f=False):
   n, bins, patches = plt.hist(x,  bins = bins, range = range)
   if(f is True): 
     bin_centers = 0.5 * (bins[1:] + bins[:-1]) 
-    p0 = [0.1, len(x), 15., 3., 17.5, 0.4]
+    p0 = [0.2, len(x), 15.5 , 6., 16., 0.8] #0.2, len(x), 17.5, 2.8, 18.1, 0.5
     mask = (n > 0.) 
-    opt, pcov = curve_fit(two_gauss, bin_centers[mask], n[mask], sigma = numpy.sqrt(n[mask]), p0 = p0)    
-    print("\n\nFIT CON DUE GAUSSIANE\n")
-    print("Parametri del fit (norm, mean, sigma): %s +-%s" % (opt, numpy.sqrt(numpy.diagonal(pcov))))
-    print("Matrice di covarianza:\n%s" % pcov) 
-    chi2, p = chisquare(n[mask], two_gauss(bin_centers[mask], *opt) )
+    opt, pcov = curve_fit(fit_functions.two_gauss, bin_centers[mask], n[mask], sigma = numpy.sqrt(n[mask]), p0 = p0)
+    results = ''
+    for v, dv in zip(opt, pcov.diagonal()):
+        results += '%f +- %f\n' % (v, numpy.sqrt(dv))
+    print('Parametri fit con due gaussiane:\n%s' % results)
+   
+    chi2 = (n[mask] - fit_functions.two_gauss(bin_centers[mask], *opt))**2 / n[mask]
+    chi2 = chi2.sum()
     print("Chi quadro/ndof: ", chi2, len(n[mask]))  
     bin_grid = numpy.linspace(*range, 1000)
-    #legend = ("OPT" % tuple(opt))
-    plt.plot(bin_grid, two_gauss(bin_grid, *opt), '-r', label = None)        
-    #plt.legend() 
-  return 
+    plt.plot(bin_grid, fit_functions.two_gauss(bin_grid, *opt), '-r', label = None)        
+  return opt, pcov
 
   
 #Disegna due istogrammi in due subplot  
@@ -130,20 +126,20 @@ def hist_log(x, xlabel, ylabel, bins = None, range = None):
 #
 def line_fit(x, y, dy, xlabel, ylabel):
   p0 = [1., 1. ]
-  opt, pcov = curve_fit(line, x, y, sigma = dy)    
+  opt, pcov = curve_fit(fit_functions.line, x, y, sigma = dy)    
   print("Parametri del fit : %s" % opt)
   print("Matrice di covarianza: %s\n" % pcov)
-  chi2, p = chisquare(y, line(x, *opt) )
+  chi2, p = chisquare(y, fit_functions.line(x, *opt) )
   print("chi square/ndof: ", chi2, len(x))
   plt.figure()
   plt.subplot(2, 1, 1)
   plt.ylabel(ylabel)
   plt.errorbar(x, y, yerr=dy, xerr=None, fmt='.')
   legend = ("m: %f ns/cm\nq: %f ns" % tuple(opt))
-  plt.plot(numpy.linspace(x.min(), x.max, 1000), plot_functions.line(numpy.linspace(x.min(), x.max, 1000), *opt), 'r', label = legend)
+  plt.plot(numpy.linspace(x.min(), x.max, 1000), fit_functions.line(numpy.linspace(x.min(), x.max, 1000), *opt), 'r', label = legend)
   plt.legend() 
   plt.subplot(2, 1, 2)
-  plt.errorbar(x, y-plot_functions.line(x, *opt), yerr=dy, fmt='.')
+  plt.errorbar(x, y-fit_functions.line(x, *opt), yerr=dy, fmt='.')
   plt.ylabel("residui")
   plt.xlabel(xlabel)
   return opt, pcov

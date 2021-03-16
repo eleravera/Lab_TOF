@@ -13,6 +13,7 @@ import numpy
 import matplotlib.pyplot as plt
 from scipy.stats import pearsonr
 
+import fit_functions
 import plot_functions
 
 #Opzioni da terminale: input file e fondo scala della tac
@@ -76,9 +77,6 @@ cost = 30.
 TOF = (T13+T23) * 0.5 + cost
 range_TOF = (5.,  90.)
 plot_functions.histogram(TOF, "T23+T13[ns]", "dN/dT", bins = bins, range = range_TOF, f = True)
-
-
-
 
 
 
