@@ -73,12 +73,24 @@ print("r, p T23 and T13:", r, p)
 plot_functions.fit2gauss(T13, "T_13 [ns]", "dN/dT_13", bins , range = range_T13, f = True)
 
 #Distribuzione del TOF 
-cost = 30.
-TOF = (T13+T23) * 0.5 + cost
-range_TOF = (5.,  90.)
-plot_functions.histogram(TOF, "T23+T13[ns]", "dN/dT", bins = bins, range = range_TOF, f = True)
+cost = 17.5
+TOF = ( T13 + T23 ) * 0.5 -cost
+range_TOF = (-30.,  50.)
+plot_functions.histogram(TOF, "TOF[ns]", "dN/dT", bins = bins, range = range_TOF, f = True)
 
 
+mask_tof = TOF > 0.
+
+q_13 = 26.53 #ns
+q_23 = 8.86 #ns
+m_13 = -0.06575 #ns/cm
+m_23 = 0.06421 #ns/cm
+
+x_13 = (T13 - q_13 )/m_13
+x_23 = (T23 - q_23 )/m_23
+
+print("x13, x23:", x_13,  x_23)
+#print("x13[mask], x23[mask]", x_13[mask_tof])
 
 
 plt.ion() 
