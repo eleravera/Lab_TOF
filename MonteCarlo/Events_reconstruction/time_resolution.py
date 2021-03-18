@@ -14,7 +14,7 @@ def convolution_and_fit(T_sim, T_measured, xlabel, data_bins, data_range, sim_bi
     n, bins, patches = plt.hist(T_sim, bins = sim_bins, range = sim_range)
     bin_centers = 0.5 * (bins[1:] + bins[:-1])
     index_max = n.argmax()
-    delta_bin =  11 * int(len(bin_centers)/(max(bin_centers) - min(bin_centers)))
+    delta_bin =  18 * int(len(bin_centers)/(max(bin_centers) - min(bin_centers)))
     index_low = index_max - delta_bin
     index_high = index_max + delta_bin    
     x = bin_centers[index_low:index_high]

@@ -14,7 +14,7 @@ MUON_MASS = 105. #MeV
 
 #Distribuzione dei muoni in theta
 def dist_theta(theta):
-  return (1/numpy.pi) * (numpy.cos(theta))**2
+  return (numpy.cos(theta))**2
 
 #Spettro in energia dei raggi cosmici
 def distr_energy(E): 
@@ -23,12 +23,13 @@ def distr_energy(E):
 
 """ Genero muoni nell'angolo solido"""
 def muon_angle_generator(N_events, pdf):      
-  theta = numpy.linspace(-numpy.pi, +numpy.pi, 200) 
+  theta = numpy.linspace(-numpy.pi/2, numpy.pi/2, 200) 
   cdf_y  = []
   for i in range(len(theta)):
     y, rest = quad(pdf, theta[0], theta[i])  
-    cdf_y.append(y)       
-  cdf_y, unique_indices = numpy.unique(cdf_y, return_index=True) 
+    cdf_y.append(y)
+  cdf_y, unique_indices = numpy.unique(cdf_y, return_index=True)
+  cdf_y /= cdf_y[-1]
   theta = theta[unique_indices] 
   funzione = interp1d(cdf_y, theta)       
 
@@ -89,6 +90,7 @@ def propagation_from_S1_to_S3(x_s1, y_s1, theta_muon, phi_muon):
   z = geometry.Z1/2 + geometry.Z3/2 + geometry.h_13 
   x_s3 = x_s1 + numpy.cos(phi_muon) * numpy.tan(theta_muon) * z 
   y_s3 = y_s1 + numpy.sin(phi_muon) * numpy.tan(theta_muon) * z 
+
   mask = ((x_s3 > (geometry.X1-geometry.X3)*0.5) * (x_s3 < (geometry.X1+geometry.X3)*0.5) * (y_s3<geometry.Y3/2) * (y_s3>-geometry.Y3/2))  
   return x_s3, y_s3, mask, z
   

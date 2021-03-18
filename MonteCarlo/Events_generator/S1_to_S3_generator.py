@@ -20,12 +20,11 @@ if __name__ == '__main__' :
     output_file_events = options['output_File_events']
      
     #Genero un muone con le funzioni di muon_generator_functions nella configurazione con scintillatore 3 sotto la barra       
-    E, P, beta = muon_generator_functions.muon_energy_generator(N, muon_generator_functions.distr_energy, 1., 1.e3) 
+    E, P, beta = muon_generator_functions.muon_energy_generator(N, muon_generator_functions.distr_energy, 90., 1.e4) 
     theta, phi = muon_generator_functions.muon_angle_generator(N, muon_generator_functions.dist_theta)
     
     x1, y1 = muon_generator_functions.position_on_S1_generator(N) 
     x3, y3, mask, z = muon_generator_functions.propagation_from_S1_to_S3(x1, y1, theta, phi)
-    
     f = mask>0
     
     #Stampa i dati su terminale

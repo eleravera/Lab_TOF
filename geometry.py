@@ -8,7 +8,7 @@ N1 = 1.58
 
 v_gamma = c/N1
 
-h_13 = 2. #m da scintillatore a scintillatore 
+h_13 = 2.0 #m da scintillatore a scintillatore 
 
 """Scintillatore 3"""
 X3 = 0.055 #m

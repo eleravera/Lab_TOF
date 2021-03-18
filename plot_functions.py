@@ -9,7 +9,8 @@ import fit_functions
 
 
 #Disegna un istogramma e se attiva la flag ne fa il fit
-def histogram(x, xlabel, ylabel, bins = None, range = None, f=False, density = False):
+def histogram(x, xlabel, ylabel, bins = None, range = None, f=True, density = False):
+
   if(bins is None ): 
     bins = int(numpy.sqrt(len(x)))
   if (range is None):
@@ -33,7 +34,8 @@ def histogram(x, xlabel, ylabel, bins = None, range = None, f=False, density = F
     legend = ("norm: %f\nmean: %f\nsigma: %f" % tuple(opt))
     plt.plot(bin_grid, fit_functions.gauss(bin_grid, *opt), '-r', label = legend)        
     plt.legend() 
-  return opt, pcov
+    return opt, pcov
+  
 
 #Disegna un istogramma e se attiva la flag ne fa il fit con due gaussiane 
 def fit2gauss(x, xlabel, ylabel, bins = None, range = None, f=False):
@@ -101,7 +103,7 @@ def hist2d(x, y, xlabel, ylabel, bins=None, range_x = None, range_y = None):
    
   if(bins is None ): 
     bins = int(numpy.sqrt(len(x))) 
-  plt.hist2d(x, y,  bins=bins )  
+  plt.hist2d(x, y,  bins=bins , range = (range_x, range_y))  
   plt.xlabel(xlabel)
   plt.ylabel(ylabel)
   plt.colorbar()

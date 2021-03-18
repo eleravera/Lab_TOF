@@ -4,6 +4,7 @@ sys.path.insert(1, '/home/testaovo/Scrivania/LABORATORIO/TOF/Lab_TOF')
 import argparse 
 import numpy
 import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
 
 import fit_functions
 
@@ -26,7 +27,7 @@ if __name__ == '__main__' :
     print("Delta t max: ", Delta_t.max())
 
 
-    range = (0., 50.)
+    range = (0., 25.)
 
 
     n_bins = 45
@@ -37,9 +38,9 @@ if __name__ == '__main__' :
     opt, pcov = curve_fit(fit_functions.exponential, bin_centers[mask], n[mask], sigma = numpy.sqrt(n[mask]))    
     print("fit parameters (amplitude, rate): %s" % opt)
 
-    bin_grid = numpy.linspace(*range, 1000)
+    bin_grid = numpy.linspace(0., 25., 1000)
     legend = ("ampl: %f\nrate: %f" % tuple(opt))
-    plt.plot(bin_grid, exponential(bin_grid, *opt), '-r', label = legend)    
+    plt.plot(bin_grid, fit_functions.exponential(bin_grid, *opt), '-r', label = legend)    
     plt.legend() 
 
     plt.ion()
