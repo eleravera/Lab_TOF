@@ -14,7 +14,7 @@ def convolution_and_fit(T_sim, T_measured, xlabel, data_bins, data_range, sim_bi
     n, bins, patches = plt.hist(T_sim, bins = sim_bins, range = sim_range)
     bin_centers = 0.5 * (bins[1:] + bins[:-1])
     index_max = n.argmax()
-    delta_bin =  18 * int(len(bin_centers)/(max(bin_centers) - min(bin_centers)))
+    delta_bin =  15* int(len(bin_centers)/(max(bin_centers) - min(bin_centers)))
     index_low = index_max - delta_bin
     index_high = index_max + delta_bin    
     x = bin_centers[index_low:index_high]
@@ -23,8 +23,10 @@ def convolution_and_fit(T_sim, T_measured, xlabel, data_bins, data_range, sim_bi
     plt.xlabel(xlabel)
     plt.legend()
     
+    p0 = [0.2, len(x), 27 , 3., 28.5 , 0.6]
+    
     #calcola i parametri della doppia gaussiana e calcola la convoluzione
-    opt_true, pcov_true = plot_functions.fit2gauss(T_measured, xlabel, "dN/dT", bins = data_bins, range=data_range, f = True)    
+    opt_true, pcov_true = plot_functions.fit2gauss(T_measured, xlabel, "dN/dT", bins = data_bins, range=data_range, f = True, p0=p0)    
     convolved_fit_function = fit_functions.create_convolution(polynomial_f, fit_functions.two_gauss) 
     
     #Fa il fit  
@@ -87,24 +89,29 @@ if __name__ == '__main__' :
       plot_functions.multiple_histogram(x1[mask], y1[mask], "x1[mask]", "y1[mask]", bins=45)  
     
     
-    delay = 25.14
+    delay = 28.
     res = 0.
     TOF_sim = signal_propagation_functions.Time_Of_Flight(x1, x3, y1, y3, 0., beta)
     T13_sim = signal_propagation_functions.DT_13(x1, x3, delay, TOF_sim, res = res) 
     T23_sim = signal_propagation_functions.DT_23(x1, x3, delay, TOF_sim, res = res) 
     
     data_bins13 = 101
-    data_range13 = (0., 30.)
+    data_range13 = (10., 45.)
     sim_bins13 = 101
-    sim_range13 = (0., 30.)
+    sim_range13 = (10., 45.)
+    plt.figure()
+    plt.hist(T13, bins = 80)
+    plt.figure()
+    plt.hist(T13_sim, bins = 80)   
+
+    
     convolution_and_fit(T13_sim, T13, "T13[ns]", data_bins13, data_range13, sim_bins13, sim_range13 )
     print("-----------------------------------")
     data_bins23 = 100
     data_range23 = (0., 30.)
     sim_bins23 = 100
     sim_range23 = (0., 30.)    
-    convolution_and_fit(T23_sim, T23, "T23[ns]", data_bins23, data_range23, sim_bins23, sim_range23 )        
-    
+   #convolution_and_fit(T23_sim, T23, "T23[ns]", data_bins23, data_range23, sim_bins23, sim_range23 )        
     
     
     plt.ion()

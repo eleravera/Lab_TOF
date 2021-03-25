@@ -14,8 +14,8 @@ import signal_propagation_functions
 description = ''
 options_parser = argparse.ArgumentParser(description = description)
 options_parser.add_argument('--input_file', '-f', default='None', type=str, help='File of the events')
-options_parser.add_argument('--delay', '-d', default='28', type=int, help='Delay')
-options_parser.add_argument('--z_scintillator', '-z', default='2.', type=float, help='Position of the scintillator 3')
+options_parser.add_argument('--delay', '-d', default='0', type=int, help='Delay')
+options_parser.add_argument('--z_scintillator', '-z', default='1.8', type=float, help='Position of the scintillator 3')
 options_parser.add_argument('--plot_flag', '-p', default= False, type=bool, help='Flag to plot some distributions to test')
 options_parser.add_argument('--output_File', '-fo', default='None', type=str, help='File su cui scrivere ')
 
@@ -39,13 +39,13 @@ if __name__ == '__main__' :
     
     #Plot sulle distribuzioni dei dati generati: da usare come test
     if(plot_flag == True): 
-      plot_functions.multiple_histogram(theta, phi, "theta", "phi", bins = 45, range_var1 = (-numpy.pi, numpy.pi),  range_var2 = (0., numpy.pi*2))  
-      plot_functions.multiple_histogram(theta[mask], phi[mask], "theta[mask]", "phi[mask]", bins=45, range_var1 = (-1, 1),  range_var2 = (0., numpy.pi*2))       
+      plot_functions.multiple_histogram(theta, phi, '$\Theta[rad]$', "$\Phi[rad]$", bins = 45, range_var1 = (-numpy.pi, numpy.pi),  range_var2 = (0., numpy.pi*2), density = True)  
+      plot_functions.multiple_histogram(theta[mask], phi[mask], "$\Theta_{S3}[rad]$", "$\Phi_{S3}[rad]$", bins=45, range_var1 = (-1, 1),  range_var2 = (0., numpy.pi*2), density = True)       
       plot_functions.multiple_histogram(x3, y3, "x3", "y3", bins=45)      
       print(y3, y3[mask])
       plot_functions.multiple_histogram(x3[mask], y3[mask], "x3[mask]", "y3[mask]", bins=45)  
-      plot_functions.multiple_histogram(x1, y1, "x1", "y1", bins=45)      
-      plot_functions.multiple_histogram(x1[mask], y1[mask], "x1[mask]", "y1[mask]", bins=45)  
+      plot_functions.multiple_histogram(x1, y1, "$x [cm]$", "$y [cm]$", bins=45, density = True)      
+      plot_functions.multiple_histogram(x1[mask], y1[mask], "$x_{S3} [cm]$",  "$y_{S3} [cm]$", bins=45, density = True)  
  
 
     res = None

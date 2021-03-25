@@ -4,6 +4,7 @@ import numpy
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 from scipy.stats import chisquare
+from matplotlib.colors import LogNorm
 
 import fit_functions
 
@@ -16,8 +17,12 @@ def histogram(x, xlabel, ylabel, bins = None, range = None, f=True, density = Fa
   if (range is None):
    range = (x.min(), x.max()) 
   plt.figure()
-  plt.xlabel(xlabel)
+  plt.xlabel(xlabel, fontsize=14)
+  plt.ylabel(ylabel, fontsize=14)
   n, bins, patches = plt.hist(x,  bins = bins, range = range, density = density)
+  plt.xticks(fontsize=14, rotation=0)
+  plt.yticks(fontsize=14, rotation=0)
+    
   if(f is True): 
     bin_centers = 0.5 * (bins[1:] + bins[:-1]) 
     p0 = [len(x), numpy.mean(x), 1.]
@@ -38,17 +43,21 @@ def histogram(x, xlabel, ylabel, bins = None, range = None, f=True, density = Fa
   
 
 #Disegna un istogramma e se attiva la flag ne fa il fit con due gaussiane 
-def fit2gauss(x, xlabel, ylabel, bins = None, range = None, f=False):
+def fit2gauss(x, xlabel, ylabel, bins = None, range = None, f=False, p0=None):
   if(bins is None ): 
     bins = int(numpy.sqrt(len(x)))
   if (range is None):
    range = (x.min(), x.max())   
   plt.figure()
-  plt.xlabel(xlabel)
+  plt.xlabel(xlabel, fontsize=14)
+  plt.ylabel(ylabel, fontsize=14)
+  plt.yticks(fontsize=14, rotation=0)
+  plt.xticks(fontsize=14, rotation=0)
+  
   n, bins, patches = plt.hist(x,  bins = bins, range = range)
   if(f is True): 
     bin_centers = 0.5 * (bins[1:] + bins[:-1]) 
-    p0 = [0.2, len(x), 15.5 , 6., 16., 0.8] #0.2, len(x), 17.5, 2.8, 18.1, 0.5
+#    p0 = [0.2, len(x), 15.5 , 6., 16., 0.8] #0.2, len(x), 17.5, 2.8, 18.1, 0.5
     mask = (n > 0.) 
     opt, pcov = curve_fit(fit_functions.two_gauss, bin_centers[mask], n[mask], sigma = numpy.sqrt(n[mask]), p0 = p0)
     results = ''
@@ -65,7 +74,7 @@ def fit2gauss(x, xlabel, ylabel, bins = None, range = None, f=False):
 
   
 #Disegna due istogrammi in due subplot  
-def multiple_histogram(var1, var2, xlabel1, xlabel2, bins = None, range_var1= None, range_var2 = None ):
+def multiple_histogram(var1, var2, xlabel1, xlabel2, bins = None, range_var1= None, range_var2 = None , density = False):
   if(bins is None ): 
     bins = int(numpy.sqrt(len(var1)))
   if (range_var1 is None):
@@ -74,23 +83,31 @@ def multiple_histogram(var1, var2, xlabel1, xlabel2, bins = None, range_var1= No
     range_var2 = (var2.min(), var2.max())   
 
   plt.figure()
-  plt.subplot(2, 1, 1)
-  plt.xlabel(xlabel1)
-  n1, bins1, patches1 = plt.hist(var1,  bins = bins, range = range_var1)
-  plt.subplot(2, 1, 2)
-  plt.xlabel(xlabel2)
-  n2, bins2, patches2 = plt.hist(var2,  bins = bins, range = range_var2)
+  plt.subplot(1, 2, 1)
+  plt.xlabel(xlabel1, fontsize = 14)
+  n1, bins1, patches1 = plt.hist(var1,  bins = bins, range = range_var1, density = density)
+  plt.xticks(fontsize=14, rotation=0)
+  plt.yticks(fontsize=14, rotation=0)
+  
+  plt.subplot(1, 2, 2)
+  plt.xlabel(xlabel2,  fontsize = 14)
+  plt.yticks(fontsize=14, rotation=0)
+  plt.xticks(fontsize=14, rotation=0)
+  n2, bins2, patches2 = plt.hist(var2,  bins = bins, range = range_var2, density = density)
   return   
   
 #Disegna lo scatter plot di due variabili  
 def scatter_plot(x, y, xlabel, ylabel):
   plt.figure()
   plt.plot(x, y, '.')
-  plt.xlabel(xlabel)
+  plt.xlabel(xlabel, fontsize=14)
   plt.xlim(x.min(), x.max())
-  plt.ylabel(ylabel)
+  plt.ylabel(ylabel, fontsize=14)
   plt.ylim(y.min(), y.max())  
+  plt.yticks(fontsize=14, rotation=0)
+  plt.xticks(fontsize=14, rotation=0)
   plt.grid(True)
+  
   return   
 
 #Disegna l'istogramma 2D di due variabili  
@@ -103,25 +120,27 @@ def hist2d(x, y, xlabel, ylabel, bins=None, range_x = None, range_y = None):
    
   if(bins is None ): 
     bins = int(numpy.sqrt(len(x))) 
-  plt.hist2d(x, y,  bins=bins , range = (range_x, range_y))  
-  plt.xlabel(xlabel)
-  plt.ylabel(ylabel)
+  plt.hist2d(x, y,  bins=bins , range = (range_x, range_y), norm=LogNorm())  
+  plt.xlabel(xlabel, fontsize=14)
+  plt.ylabel(ylabel, fontsize=14)
+  plt.yticks(fontsize=14, rotation=0)
+  plt.xticks(fontsize=14, rotation=0)  
   plt.colorbar()
   return   
-  plt.ylabel(ylabel)
-  plt.colorbar()
-  return   
+
   
 #fa plot in log  
 def hist_log(x, xlabel, ylabel, bins = None, range = None):
-  if(bins is None ): 
-    bins = int(numpy.sqrt(len(x)))
   if (range is None):
    range = (x.min(), x.max())   
-  bins = numpy.logspace( x.min(), x.max(), 101)
+  
+  if (bins is None): 
+    bins = numpy.logspace( numpy.log(x.min()), numpy.log(x.max()), 101)
   plt.hist(x, bins = bins)
   plt.gca().set_xscale('log') 
-  plt.xlabel() 
+  plt.xlabel(xlabel, fontsize=14) 
+  plt.yticks(fontsize=14, rotation=0)
+  plt.xticks(fontsize=14, rotation=0)   
   return   
   
 
@@ -135,7 +154,11 @@ def line_fit(x, y, dy, xlabel, ylabel):
   print("chi square/ndof: ", chi2, len(x))
   plt.figure()
   plt.subplot(2, 1, 1)
-  plt.ylabel(ylabel)
+  plt.ylabel(ylabel, fontsize=14)
+  plt.ylabel(xlabel, fontsize=14)
+  plt.yticks(fontsize=14, rotation=0)
+  plt.xticks(fontsize=14, rotation=0) 
+  
   plt.errorbar(x, y, yerr=dy, xerr=None, fmt='.')
   legend = ("m: %f ns/cm\nq: %f ns" % tuple(opt))
   x_new = numpy.linspace(0., 300., 1000)
@@ -143,7 +166,9 @@ def line_fit(x, y, dy, xlabel, ylabel):
   plt.legend() 
   plt.subplot(2, 1, 2)
   plt.errorbar(x, y-fit_functions.line(x, *opt), yerr=dy, fmt='.')
-  plt.ylabel("residui")
-  plt.xlabel(xlabel)
+  plt.ylabel("residui", fontsize=14)
+  plt.xlabel(xlabel, fontsize=14)
+  plt.yticks(fontsize=14, rotation=0)
+  plt.xticks(fontsize=14, rotation=0)     
   return opt, pcov
   
