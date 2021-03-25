@@ -43,7 +43,7 @@ def histogram(x, xlabel, ylabel, bins = None, range = None, f=True, density = Fa
   
 
 #Disegna un istogramma e se attiva la flag ne fa il fit con due gaussiane 
-def fit2gauss(x, xlabel, ylabel, bins = None, range = None, f=False, p0=None):
+def fit2gauss(x, xlabel, ylabel, bins = None, range = None, f=False, p0=None, bounds = None):
   if(bins is None ): 
     bins = int(numpy.sqrt(len(x)))
   if (range is None):
@@ -53,13 +53,15 @@ def fit2gauss(x, xlabel, ylabel, bins = None, range = None, f=False, p0=None):
   plt.ylabel(ylabel, fontsize=14)
   plt.yticks(fontsize=14, rotation=0)
   plt.xticks(fontsize=14, rotation=0)
+ 
+  if (bounds is None):
+     bounds = (-numpy.inf, -numpy.inf, -numpy.inf, -numpy.inf, -numpy.inf , -numpy.inf), (numpy.inf, numpy.inf, numpy.inf,numpy.inf, numpy.inf, numpy.inf )
   
   n, bins, patches = plt.hist(x,  bins = bins, range = range)
   if(f is True): 
     bin_centers = 0.5 * (bins[1:] + bins[:-1]) 
-#    p0 = [0.2, len(x), 15.5 , 6., 16., 0.8] #0.2, len(x), 17.5, 2.8, 18.1, 0.5
     mask = (n > 0.) 
-    opt, pcov = curve_fit(fit_functions.two_gauss, bin_centers[mask], n[mask], sigma = numpy.sqrt(n[mask]), p0 = p0)
+    opt, pcov = curve_fit(fit_functions.two_gauss, bin_centers[mask], n[mask], sigma = numpy.sqrt(n[mask]), p0 = p0, bounds = bounds)
     results = ''
     for v, dv in zip(opt, pcov.diagonal()):
         results += '%f +- %f\n' % (v, numpy.sqrt(dv))
