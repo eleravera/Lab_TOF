@@ -20,15 +20,19 @@ if __name__ == '__main__' :
     input_file = options['input_file']
 
     t, T23,  T13  = numpy.loadtxt(input_file, unpack = True)
-    t_run = t.max() -t.min()
-    print("\n%d events recorded in %f s\nRate: %f Hz\n" % (len(t), t_run, len(t)/t_run) )
 
     Delta_t = numpy.ediff1d(t)
+
+    mask_restart = Delta_t < 0.
+    t_run = t[len(t)-1] - t[0] +  numpy.sum(mask_restart) * 6553.6
+    print("\n%d events recorded in %f s\nRate: %f Hz\n" % (len(t), t_run, len(t)/t_run) )   
+    
+
     mask = Delta_t > 0.
     Delta_t = Delta_t[mask]
     print("Delta t max: ", Delta_t.max())
-    
-    range = (0., 180.)
+
+    range = (0., 40.)
     n_bins = 20
     n, bins = numpy.histogram(Delta_t,  bins = n_bins, range = range)
     errors = numpy.sqrt(n)

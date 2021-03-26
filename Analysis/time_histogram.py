@@ -66,7 +66,6 @@ TOF = analysis_functions.TOF(T13, T23, costant)
 m = 0.06421 #ns/cm
 x = analysis_functions.x(T13, T23, m ) 
 
-
 h13 = geometry.h_13 * 100 #cm
 
 l = numpy.sqrt((x-(100 * geometry.X1)*0.5)**2 + h13**2)

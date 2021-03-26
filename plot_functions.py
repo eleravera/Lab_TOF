@@ -50,10 +50,16 @@ def fit2gauss(x, xlabel, ylabel, bins = None, range = None, f=False, p0=None, bo
   if (range is None):
    range = (x.min(), x.max())   
   plt.figure()
+
+  time = 10000
+  n_evts = len(x)    
+  plt.title('x = 10 cm, %d eventi %d secondi, 24/03/21' % (n_evts, time), fontsize=12)
+  
   plt.xlabel(xlabel, fontsize=14)
   plt.ylabel(ylabel, fontsize=14)
   plt.yticks(fontsize=14, rotation=0)
   plt.xticks(fontsize=14, rotation=0)
+
  
   if (bounds is None):
      bounds = (-numpy.inf, -numpy.inf, -numpy.inf, -numpy.inf, -numpy.inf , -numpy.inf), (numpy.inf, numpy.inf, numpy.inf,numpy.inf, numpy.inf, numpy.inf )

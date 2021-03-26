@@ -13,7 +13,7 @@ def convolution_and_fit(T_sim, T_measured, xlabel, ylabel, data_bins, data_range
     n, bins, patches = plt.hist(T_sim, bins = sim_bins, range = sim_range)
     bin_centers = 0.5 * (bins[1:] + bins[:-1])
     index_max = n.argmax()
-    delta_bin =  15* int(len(bin_centers)/(max(bin_centers) - min(bin_centers)))
+    delta_bin =  10 * int(len(bin_centers)/(max(bin_centers) - min(bin_centers)))
     index_low = index_max - delta_bin
     index_high = index_max + delta_bin    
     x = bin_centers[index_low:index_high]
@@ -23,8 +23,8 @@ def convolution_and_fit(T_sim, T_measured, xlabel, ylabel, data_bins, data_range
     plt.legend()
     
 
-    p0 = [0.2, len(x), 17. , 3., 17. , 0.8]
-    bounds = (0., -numpy.inf, 10., 1., 10. , 0.1 ), (1., numpy.inf, 20, 5.5, 20., 0.9 )
+    p0 = [0.2, len(x), 7. , 3., 9. , 0.8]
+    bounds = (0., -numpy.inf, 5., 1., 7. , 0.1 ), (1., numpy.inf, 10, 5., 11., 0.9 )
 
     #calcola i parametri della doppia gaussiana e calcola la convoluzione
     opt_true, pcov_true = plot_functions.fit2gauss(T_measured, xlabel, ylabel, bins = data_bins, range=data_range, f = True, p0=p0, bounds = bounds)    
@@ -54,6 +54,9 @@ def convolution_and_fit(T_sim, T_measured, xlabel, ylabel, data_bins, data_range
 
     y = convolved_fit_function(x[mask_fit], *opt)
     plt.plot(x[mask_fit], y, '-', label = legend)
+    time = 10000
+    n_evts = len(T_measured)    
+    plt.title('x = 10 cm, %d eventi %d secondi, 24/03/21' % (n_evts, time), fontsize=12)
     plt.xlabel(xlabel, fontsize=14)
     plt.ylabel(ylabel, fontsize=14)
     plt.yticks(fontsize=14, rotation=0)
@@ -128,11 +131,14 @@ if __name__ == '__main__' :
     
     print("-----------------------------------")
     
+    mask = (T23 > 1.)
+    T23 = T23[mask] 
     
+       
     data_bins23 = 101
-    data_range23 = (5., 40.)
+    data_range23 = (0., 30.)
     sim_bins23 = 101
-    sim_range23 = (5., 40.)    
+    sim_range23 = (0., 30.)    
 
     plt.figure()
     plt.hist(T23, bins = 80)
