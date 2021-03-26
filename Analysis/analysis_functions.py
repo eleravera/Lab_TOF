@@ -50,7 +50,7 @@ def beta(l,  h13, TOF ):
 
   
 def l_vs_TOF(l, TOF):
-  l_bins = numpy.linspace(l.min(), l.min() + 40, 4)
+  l_bins = numpy.linspace(l.min()-10, l.min() + 40, 5)
   mean_tof = []
   sigma_tof = []
   for i in range(len(l_bins)-1): 

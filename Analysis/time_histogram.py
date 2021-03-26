@@ -71,14 +71,11 @@ h13 = geometry.h_13 * 100 #cm
 
 l = numpy.sqrt((x-(100 * geometry.X1)*0.5)**2 + h13**2)
 beta = analysis_functions.beta(l, h13, TOF ) 
-"""
-plot_functions.hist2d(TOF, l,  "TOF [ns]", "l[cm]", bins=20, range_x = (10., 40.), range_y = (120, 220.))
+
+"""plot_functions.hist2d(TOF, l,  "TOF [ns]", "l[cm]", bins=20, range_x = (10., 40.), range_y = (120, 250.))
 analysis_functions.l_vs_TOF(l, TOF)
-
-
-l_bins = numpy.array([])
-tof_bins = numpy.array([20., 21.1, 22, 22.5, 22.4 , 17., ])
 """
+
 plt.ion() 
 plt.show()
 

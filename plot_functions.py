@@ -34,7 +34,8 @@ def histogram(x, xlabel, ylabel, bins = None, range = None, f=True, density = Fa
     print('Parametri fit con una gaussiana:\n%s' % results)
     chi2 = (n[mask] - fit_functions.gauss(bin_centers[mask], *opt))**2 / n[mask]
     chi2 = chi2.sum()
-    print("Chi quadro/ndof: ", chi2, len(n[mask]))  
+    ndof = len(n[mask])-len(opt)
+    print("Chi quadro/ndof: ", chi2, ndof)  
     bin_grid = numpy.linspace(*range, 1000)
     legend = ("norm: %f\nmean: %f\nsigma: %f" % tuple(opt))
     plt.plot(bin_grid, fit_functions.gauss(bin_grid, *opt), '-r', label = legend)        
@@ -69,7 +70,8 @@ def fit2gauss(x, xlabel, ylabel, bins = None, range = None, f=False, p0=None, bo
    
     chi2 = (n[mask] - fit_functions.two_gauss(bin_centers[mask], *opt))**2 / n[mask]
     chi2 = chi2.sum()
-    print("Chi quadro/ndof: ", chi2, len(n[mask]))  
+    ndof = len(n[mask]) - len(opt)
+    print("Chi quadro/ndof: ", chi2, ndof)  
     bin_grid = numpy.linspace(*range, 1000)
     plt.plot(bin_grid, fit_functions.two_gauss(bin_grid, *opt), '-r', label = None)        
   return opt, pcov
@@ -152,8 +154,6 @@ def line_fit(x, y, dy, xlabel, ylabel):
   opt, pcov = curve_fit(fit_functions.line, x, y, sigma = dy)    
   print("Parametri del fit : %s" % opt)
   print("Matrice di covarianza: %s\n" % pcov)
-  chi2, p = chisquare(y, fit_functions.line(x, *opt) )
-  print("chi square/ndof: ", chi2, len(x))
   plt.figure()
   plt.subplot(2, 1, 1)
   plt.ylabel(ylabel, fontsize=14)
@@ -166,11 +166,17 @@ def line_fit(x, y, dy, xlabel, ylabel):
   x_new = numpy.linspace(0., 300., 1000)
   plt.plot(x_new, fit_functions.line(x_new, *opt), 'r', label = legend)
   plt.legend() 
+  
   plt.subplot(2, 1, 2)
-  plt.errorbar(x, y-fit_functions.line(x, *opt), yerr=dy, fmt='.')
+  res = y-fit_functions.line(x, *opt)
+  plt.errorbar(x, res, yerr=dy, fmt='.')
   plt.ylabel("residui", fontsize=14)
   plt.xlabel(xlabel, fontsize=14)
   plt.yticks(fontsize=14, rotation=0)
-  plt.xticks(fontsize=14, rotation=0)     
+  plt.xticks(fontsize=14, rotation=0) 
+  chi2 = (res**2)/(dy**2)
+  chi2.sum()
+  ndof = len(x) - len(opt)
+  print("chi square/ndof: ", chi2, ndof)    
   return opt, pcov
   

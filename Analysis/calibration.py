@@ -24,16 +24,14 @@ options = vars(options_parser.parse_args())
 input_file = options['input_file']
 
 
-x, T_mean , T_sigma = numpy.loadtxt(input_file, unpack = True)
+x, T_mean , T_dmean = numpy.loadtxt(input_file, unpack = True)
 
-
-opt, pcov = plot_functions.line_fit(x, T_mean, T_sigma,  "x [cm]", "T [ns]" )
+opt, pcov = plot_functions.line_fit(x, T_mean, T_dmean,  "x [cm]", "T [ns]" )
 
 param_errors = numpy.sqrt(pcov.diagonal())  
-print("fit parameters (amplitude, rate): %s" % opt)
 
 residuals = T_mean - fit_functions.line(x, *opt)
-chi2 = numpy.sum((residuals/T_sigma)**2)
+chi2 = numpy.sum((residuals/T_dmean)**2)
 
 param_names = ['n/c', 'delay']
 legend = ''

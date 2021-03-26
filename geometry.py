@@ -6,7 +6,7 @@ Y1 = 0.07 #m
 Z1 = 0.06 #m
 N1 = 1.58
 
-v_gamma = c/N1
+v_gamma = 15.5 * 10**7 #c/N1   
 
 h_13 = 1.77 #m da scintillatore a scintillatore 
 
