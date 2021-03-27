@@ -6,6 +6,7 @@ import numpy
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
+import plot_functions
 import fit_functions
 import utilities
 
@@ -21,7 +22,6 @@ if __name__ == '__main__' :
     input_file = options['input_file']
 
     t, T23,  T13  = numpy.loadtxt(input_file, unpack = True)
-
     t_run = utilities.acquisition_duration(t)
     
     Delta_t = numpy.ediff1d(t)
@@ -31,6 +31,7 @@ if __name__ == '__main__' :
 
     range = (0., 60.)
     n_bins = 20
+    
     n, bins = numpy.histogram(Delta_t,  bins = n_bins, range = range)
     errors = numpy.sqrt(n)
     bin_centers = 0.5 * (bins[1:] + bins[:-1])
@@ -45,19 +46,18 @@ if __name__ == '__main__' :
     p0 = (10., 0.1)
     opt, pcov = curve_fit(fit_functions.exponential, x, y, sigma = dy, p0=p0)
     param_errors = numpy.sqrt(pcov.diagonal())  
-    print("fit parameters (amplitude, rate): %s" % opt)
 
     residuals = y - fit_functions.exponential(x, *opt)
     chi2 = numpy.sum((residuals/dy)**2)
-    #plt.text(0.7, 0.7, ), transform=plt.gca().transAxes)
-    param_names = ['Amplitude', 'Rate']
-    legend = ''
-    for (name, value, error) in zip(param_names, opt, param_errors):
-        legend += ("%s: %.3f $\pm$ %.3f\n" % (name, value, error))
-    legend += ("$\chi^2$/d.o.f.=%.2f/%d "% (chi2, len(x) - len(opt)))
+    ndof = len(y)-len(opt)
+    
+    param_names = ['amplitude', 'rate']
+    param_units = ['', 'Hz']
+    legend = plot_functions.fit_legend(opt, param_errors, param_names, param_units, chi2, ndof)
+    title = '%d eventi %d secondi, 24/03/21' % (len(t), t_run)
     bin_grid = numpy.linspace(*range, 1000)
     plt.plot(bin_grid, fit_functions.exponential(bin_grid, *opt), '-r', label = legend)   
-    plt.legend() 
+    plot_functions.set_plot("$\Delta t [s]$", "entries/bin", title = title)
 
     plt.ion()
     plt.show()

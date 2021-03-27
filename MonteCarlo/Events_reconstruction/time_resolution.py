@@ -27,8 +27,7 @@ def convolution_and_fit(T_sim, T_measured, xlabel, ylabel, data_bins, data_range
     x = bin_centers[index_low:index_high]
     polynomial_f = interp1d(x, n[index_low:index_high], kind='cubic')    
     plt.plot(x, polynomial_f(x), '-', label = 'Spline geometria')
-    plt.xlabel(xlabel)
-    plt.legend()
+    plot_functions.set_plot(xlabel, ylabel, title='Simulazione Monte Carlo')
     
     p0 = [0.2, len(x), 7. , 3., 9. , 0.8]
     bounds = (0., -numpy.inf, 5., 1., 7. , 0.1 ), (1., numpy.inf, 10, 5., 11., 0.9 )
