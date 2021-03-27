@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
 import fit_functions
+import utilities
 
 """Da terminale si da in input il file di acquisizione"""
 description = ''
@@ -21,18 +22,14 @@ if __name__ == '__main__' :
 
     t, T23,  T13  = numpy.loadtxt(input_file, unpack = True)
 
-    Delta_t = numpy.ediff1d(t)
-
-    mask_restart = Delta_t < 0.
-    t_run = t[len(t)-1] - t[0] +  numpy.sum(mask_restart) * 6553.6
-    print("\n%d events recorded in %f s\nRate: %f Hz\n" % (len(t), t_run, len(t)/t_run) )   
+    t_run = utilities.acquisition_duration(t)
     
-
+    Delta_t = numpy.ediff1d(t)
     mask = Delta_t > 0.
     Delta_t = Delta_t[mask]
     print("Delta t max: ", Delta_t.max())
 
-    range = (0., 40.)
+    range = (0., 60.)
     n_bins = 20
     n, bins = numpy.histogram(Delta_t,  bins = n_bins, range = range)
     errors = numpy.sqrt(n)

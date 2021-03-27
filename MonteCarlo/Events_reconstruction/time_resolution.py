@@ -7,7 +7,15 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from scipy.optimize import curve_fit
 
-def convolution_and_fit(T_sim, T_measured, xlabel, ylabel, data_bins, data_range, sim_bins, sim_range): 
+
+import geometry
+import plot_functions
+import signal_propagation_functions
+import fit_functions
+import utilities
+
+
+def convolution_and_fit(T_sim, T_measured, xlabel, ylabel, data_bins, data_range, sim_bins, sim_range, title = None): 
     #Calcola la spline
     plt.figure()
     n, bins, patches = plt.hist(T_sim, bins = sim_bins, range = sim_range)
@@ -22,53 +30,35 @@ def convolution_and_fit(T_sim, T_measured, xlabel, ylabel, data_bins, data_range
     plt.xlabel(xlabel)
     plt.legend()
     
-
     p0 = [0.2, len(x), 7. , 3., 9. , 0.8]
     bounds = (0., -numpy.inf, 5., 1., 7. , 0.1 ), (1., numpy.inf, 10, 5., 11., 0.9 )
 
     #calcola i parametri della doppia gaussiana e calcola la convoluzione
-    opt_true, pcov_true = plot_functions.fit2gauss(T_measured, xlabel, ylabel, bins = data_bins, range=data_range, f = True, p0=p0, bounds = bounds)    
+    opt_true, pcov_true = plot_functions.fit2gauss(T_measured, xlabel, ylabel, bins = data_bins, range=data_range, f = True, p0=p0, bounds = bounds, title = title)    
     convolved_fit_function = fit_functions.create_convolution(polynomial_f, fit_functions.two_gauss) 
     
     #Fa il fit  
-    plt.figure()
+    plt.figure()    
     ni, bins, pat = plt.hist(T_measured, bins = data_bins, range=data_range)
     nj = ni[index_low:index_high] 
     mask_fit = nj>0
     opt, pcov = curve_fit(convolved_fit_function, x[mask_fit], nj[mask_fit], p0 = opt_true, bounds = bounds)
-    results = ''
-    for v, dv in zip(opt, pcov.diagonal()):
-        results += '%f +- %f\n' % (v, numpy.sqrt(dv))
-    print('\nParametri fit convoluzione:\n%s' % results)
+    
     chi2 = (nj[mask_fit] - convolved_fit_function(x[mask_fit], *opt))**2 / nj[mask_fit]
     chi2 = chi2.sum()
     ndof = len(nj[mask_fit])- len(opt)
-    print("Chi quadro/ndof: ", chi2, ndof)  
 
     param_errors = numpy.sqrt(pcov.diagonal())  
-    param_names = ['fraction', 'norm', 'mean', 'sigma1', 'mean2', 'sigma2']    
-    legend = ''
-    for (name, value, error) in zip(param_names, opt, param_errors):
-        legend += ("%s: %.3f $\pm$ %.3f\n" % (name, value, error))
-    legend += ("$\chi^2$/d.o.f.=%.2f/%d "% (chi2, len(x) - len(opt)))
+    param_names = ['fraction', 'norm', '$\mu_{1}$', '$\sigma_1$', '$\mu_{2}$', '$\sigma_2$']    
+    param_units = ['', 'ns$^{-1}$', 'ns', 'ns', 'ns', 'ns']        
+    legend = plot_functions.fit_legend(opt, param_errors, param_names, param_units, chi2, ndof)
 
     y = convolved_fit_function(x[mask_fit], *opt)
     plt.plot(x[mask_fit], y, '-', label = legend)
-    time = 10000
-    n_evts = len(T_measured)    
-    plt.title('x = 10 cm, %d eventi %d secondi, 24/03/21' % (n_evts, time), fontsize=12)
-    plt.xlabel(xlabel, fontsize=14)
-    plt.ylabel(ylabel, fontsize=14)
-    plt.yticks(fontsize=14, rotation=0)
-    plt.xticks(fontsize=14, rotation=0)    
-    plt.legend()
-
+    
+    plot_functions.set_plot(xlabel, ylabel, title)
     return   
-     
-import geometry
-import plot_functions
-import signal_propagation_functions
-import fit_functions
+
 
 description = ''
 options_parser = argparse.ArgumentParser(description = description)
@@ -91,6 +81,7 @@ if __name__ == '__main__' :
     mask = f > 0.5
     
     t, ch0, ch1 = numpy.loadtxt(input_file_data, unpack = True)
+    t_run = utilities.acquisition_duration(t)      
     T23 = ch1
     T13 = ch0
     T23 = T23 * scale/10 #[ns]
@@ -144,8 +135,10 @@ if __name__ == '__main__' :
     plt.hist(T23, bins = 80)
     plt.figure()
     plt.hist(T23_sim, bins = 80)  
+      
 
-    convolution_and_fit(T23_sim, T23, "$T_{23}[ns]$", "$dN/dT_{23}$", data_bins23, data_range23, sim_bins23, sim_range23 )        
+    title = 'x = 10 cm, %d eventi %d secondi, 24/03/21' % (len(T23), t_run)
+    convolution_and_fit(T23_sim, T23, "$T_{23} [ns]$", "entries/bin", data_bins23, data_range23, sim_bins23, sim_range23, title )        
     
 
     plt.ion()
