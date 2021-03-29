@@ -173,7 +173,7 @@ if __name__ == '__main__' :
     if save_fig ==True:
       plt.savefig('dati_risoluzione/plot/tof_costant_%s.pdf' % figlabel, format = 'pdf')    
     
-    param_2gauss_fit = utilities.make_opt_string(opt, pcov, s = string_x_n)
+    param_2gauss_fit = utilities.make_opt_string(opt_true, pcov_true, s = string_x_n)
     print(param_2gauss_fit)      
 
     with open("TOF_cost.txt", "a") as output_file:
@@ -194,7 +194,7 @@ if __name__ == '__main__' :
     if save_fig ==True:
       plt.savefig('dati_risoluzione/plot/T12_%s.pdf' % figlabel, format = 'pdf')    
 
-    param_2gauss_fit = utilities.make_opt_string(opt, pcov, s = string_x_n)      
+    param_2gauss_fit = utilities.make_opt_string(opt_true, pcov_true, s = string_x_n)      
     print(param_2gauss_fit)
 
     with open("T12.txt", "a") as output_file:

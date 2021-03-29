@@ -12,7 +12,7 @@ import fit_functions
 import utilities
 
 #T13 vs x
-input_file = 'T13_2gauss.txt'
+input_file = 'risoluzione/T13_2gauss.txt'
 x, n, fraction, norm, mean1, sigma1, mean2, sigma2, dfraction, dnorm, dmean1, dsigma1, dmean2, dsigma2  = numpy.loadtxt(input_file, unpack = True)
 
 opt, pcov = plot_functions.line_fit(x, mean2, sigma2/numpy.sqrt(n),  "x [cm]", "$T_{13}[ns]$" , title = '$T_{13}$ vs x')
@@ -23,7 +23,7 @@ print("\nVelocità della luce: %s +- %s\n" %(1/opt[0], numpy.sqrt(pcov[0][0])/op
 print("\n\n----------------------------------------\n\n")
 
 #T23 vs x
-input_file = 'T23_2gauss.txt'
+input_file = 'risoluzione/T23_2gauss.txt'
 x, n, fraction, norm, mean1, sigma1, mean2, sigma2, dfraction, dnorm, dmean1, dsigma1, dmean2, dsigma2  = numpy.loadtxt(input_file, unpack = True)
 
 opt, pcov = plot_functions.line_fit(x, mean2, sigma2/numpy.sqrt(n),  "x [cm]", "$T_{23}[ns]$", title = '$T_{23}$ vs x' )
@@ -35,11 +35,11 @@ print("\n\n----------------------------------------\n\n")
 
 
 #Risoluzione misura di T13 e T23
-input_file = 'T13_conv.txt'
+input_file = 'risoluzione/T13_conv.txt'
 x, n_13, fraction, norm, mean1_13, sigma1_13, mean2_13, sigma2_13, dfraction, dnorm, dmean1, dsigma1, dmean2, dsigma2  = numpy.loadtxt(input_file, unpack = True)
 
 
-input_file = 'T23_conv.txt'
+input_file = 'risoluzione/T23_conv.txt'
 x, n_23, fraction, norm, mean1_23, sigma1_23, mean2_23, sigma2_23, dfraction, dnorm, dmean1, dsigma1, dmean2, dsigma2  = numpy.loadtxt(input_file, unpack = True)
 
 plt.figure()
@@ -55,7 +55,7 @@ plot_functions.set_plot('x [cm]', 'mean', title = '')
 
 
 #Tof cost vs x 
-input_file = 'TOF_cost.txt'
+input_file = 'risoluzione/TOF_cost.txt'
 x, n, fraction, norm, mean1, sigma1, mean2, sigma2, dfraction, dnorm, dmean1, dsigma1, dmean2, dsigma2  = numpy.loadtxt(input_file, unpack = True)
 opt, pcov = plot_functions.line_fit(x, mean2, sigma2/numpy.sqrt(n),  "x [cm]", "$Tof cost[ns]$", title = '$Tof cost$ vs x' )
 
@@ -63,7 +63,7 @@ opt, pcov = plot_functions.line_fit(x, mean2, sigma2/numpy.sqrt(n),  "x [cm]", "
 print("\n\n----------------------------------------\n\n")
 
 #T12 vs x
-input_file = 'T12.txt'
+input_file = 'risoluzione/T12.txt'
 x, n, fraction, norm, mean1, sigma1, mean2, sigma2, dfraction, dnorm, dmean1, dsigma1, dmean2, dsigma2  = numpy.loadtxt(input_file, unpack = True)
 opt, pcov = plot_functions.line_fit(x, mean2, sigma2/numpy.sqrt(n),  "x [cm]", "$T12[ns]$", title = '$T12$ vs x' )
 
