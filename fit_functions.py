@@ -1,5 +1,5 @@
 import numpy
-
+from scipy.interpolate import interp1d
 #Retta
 def line(x, m , q):
   return m * x +q
@@ -17,9 +17,10 @@ def exponential(x, a, m):
   return a * numpy.exp(-x * m)
 
 #Convoluzione di due pdf
-def create_convolution(pdf1, pdf2):
-    
+def create_convolution(pdf1, pdf2, mode='same'):
     def convolved_fit_function(x, *args):
-        return numpy.convolve(pdf1(x), pdf2(x, *args), mode='same') 
-    
-    return convolved_fit_function  
+        x_grid = numpy.linspace(min(x), max(x), 1000)
+        y_grid = numpy.convolve(pdf1(x_grid), pdf2(x_grid, *args), mode=mode)
+        spline = interp1d(x_grid, y_grid, kind='linear') 
+        return spline(x)
+    return convolved_fit_function

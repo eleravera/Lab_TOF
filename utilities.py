@@ -58,4 +58,58 @@ def format_value_error(value, error, pm='+/-', max_dec_places=6):
         else:
             fmt = '%%d %s %%d' % pm
     return fmt % (value, error)
-    
+
+
+def TAC_scale(ch0, ch1, scale = 200): 
+  T23 = ch1
+  T13 = ch0
+
+  t23 = T23 * scale/10 #[ns]
+  t13 = T13 * scale/10 #[ns]
+
+  mask_t13 = t13 > 2.
+  mask_t23 = t23 > 2.
+  mask = mask_t13 * mask_t23
+  T13 = t13[mask]
+  T23 = t23[mask]
+  print("Numero di eventi con Ti3 < 3ns:", numpy.sum(mask))
+  
+  return T13, T23
+
+def rate_and_saturation(t, ch0, ch1): 
+#Calcola il rate degli eventi
+  Delta_t = numpy.ediff1d(t)
+  mask_t = Delta_t < 0
+  t_run = t.max() -t.min() +  numpy.sum(mask_t) * 6553.6
+
+  print("Il clock dell'FPGA è ripartito %d volte durante l'acquisizione:" % numpy.sum(mask_t) )
+  print("\n%d Events recorded in %f s\nRate: %f Hz\n" % (len(t), t_run, len(t)/t_run) )
+
+  #Cotrolla se ci sono eventi che hanno saturato l'FPGA
+  saturation_ch0_mask = ch0 > 3.2
+  saturation_ch1_mask = ch1 > 3.2
+
+  print("Rate di eventi sopra soglia sul ch0:", numpy.sum(saturation_ch0_mask)/t_run)
+  print("Rate di eventi sopra soglia sul ch1:", numpy.sum(saturation_ch1_mask)/t_run)
+  print("Frazione di eventi sopra soglia: %f., %f.\n\n" % (numpy.sum(saturation_ch0_mask)/len(t), numpy.sum(saturation_ch1_mask)/len(t)))
+  return 
+  
+  
+def make_opt_string(opt, pcov, s = ''):
+  numpy.set_printoptions(linewidth=numpy.inf, precision=5)
+  opt_err = numpy.sqrt(pcov.diagonal())
+  array_str = numpy.array_str(numpy.concatenate((opt, opt_err)) )
+  array_str = array_str.strip('[]')  
+  string = s + ' ' + array_str + '\n'
+
+  return string  
+  
+  
+  
+
+  
+  
+  
+  
+  
+

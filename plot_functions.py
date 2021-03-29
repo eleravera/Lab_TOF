@@ -62,7 +62,6 @@ def fit2gauss(x, xlabel, ylabel, bins = None, range = None, f=False, p0=None, bo
     param_units = ['', 'ns$^{-1}$', 'ns', 'ns', 'ns', 'ns']  
     param_errors = numpy.sqrt(pcov.diagonal())
     legend = fit_legend(opt, param_errors, param_names, param_units, chi2, ndof)
-    
     bin_grid = numpy.linspace(*range, 1000)   
     plt.plot(bin_grid, fit_functions.two_gauss(bin_grid, *opt), '-r', label = legend)        
     set_plot(xlabel, ylabel, title = title)
@@ -134,41 +133,43 @@ def hist_log(x, xlabel, ylabel, bins = None, range = None):
   
 
 #
-def line_fit(x, y, dy, xlabel, ylabel):
-  p0 = [1., 1. ]
-  opt, pcov = curve_fit(fit_functions.line, x, y, sigma = dy)    
-  print("Parametri del fit : %s" % opt)
-  print("Matrice di covarianza: %s\n" % pcov)
-  plt.figure()
-  plt.subplot(2, 1, 1)  
-  plt.errorbar(x, y, yerr=dy, xerr=None, fmt='.')
-  legend = ("m: %f ns/cm\nq: %f ns" % tuple(opt))
-  x_new = numpy.linspace(0., 300., 1000)
-  plt.plot(x_new, fit_functions.line(x_new, *opt), 'r', label = legend)
+def line_fit(x, y, dy, xlabel, ylabel, title = ''):
+    p0 = [1., 1. ]
+    opt, pcov = curve_fit(fit_functions.line, x, y, sigma = dy)    
+    param_errors = numpy.sqrt(pcov.diagonal())  
+    res = y-fit_functions.line(x, *opt)
+    chi2 = (res**2)/(dy**2)
+    chi2 = chi2.sum()
+    ndof = len(x) - len(opt)
   
-  set_plot(xlabel, ylabel, title=None)
+    plt.figure()
+    plt.subplot(2, 1, 1) 
+    plt.errorbar(x, y, yerr = dy, xerr = None, fmt = '.')
+
   
-  plt.subplot(2, 1, 2)
-  res = y-fit_functions.line(x, *opt)
-  plt.errorbar(x, res, yerr=dy, fmt='.')
+    param_names = ['m', 'q' ]
+    param_units = ['ns/cm', 'ns']
+    legend = fit_legend(opt, param_errors, param_names, param_units, chi2, ndof)
+    x_new = numpy.linspace(0., 300., 1000)
+    plt.plot(x_new, fit_functions.line(x_new, *opt), 'r', label = legend)
+    set_plot(xlabel, ylabel, title = title)  
+    
+    plt.subplot(2, 1, 2)
+    plt.errorbar(x, res, yerr = dy, fmt = '.')
   
-  set_plot(xlabel, ylabel, title=None)
-  
-  chi2 = (res**2)/(dy**2)
-  chi2.sum()
-  ndof = len(x) - len(opt)
-  print("chi square/ndof: ", chi2, ndof)    
-  return opt, pcov
+    set_plot(xlabel, "residui", title = '')
+    print(legend)
+    return opt, pcov
   
   
-def set_plot(xlabel, ylabel, title = None):
+def set_plot(xlabel, ylabel, title = ''):
 
   plt.title(title, fontsize=12)
   plt.xlabel(xlabel, fontsize=14)
   plt.ylabel(ylabel, fontsize=14)
   plt.yticks(fontsize=14, rotation=0)
   plt.xticks(fontsize=14, rotation=0) 
-  plt.subplots_adjust(bottom = 0.13)  
+  plt.subplots_adjust(bottom = 0.13, left = 0.15)  
   plt.legend() 
   return 
   
@@ -178,3 +179,24 @@ def fit_legend(param_values, param_errors, param_names, param_units, chi2, ndof)
       legend += ("%s: %s %s\n" % (name, utilities.format_value_error(value, error), unit))
   legend += ("$\chi^2$/d.o.f.=%.2f/%d "% (chi2, ndof))
   return legend
+  
+  
+  
+def set_double_axes(xlabel, ylabel1, ylabel2, title = ''):
+
+  fig, ax = plt.subplots()
+
+  plt.title(title, fontsize=12)
+  #fig, ax = plt.subplots(constrained_layout = True)
+  ax.set_xlabel(xlabel, fontsize=14)
+  
+  ax.set_ylabel(ylabel1, fontsize=14, color='g')
+  secax = ax.secondary_yaxis('right')
+  secax.set_ylabel(ylabel2, fontsize=14, color = 'b')
+  plt.yticks(fontsize=14, rotation=0)
+  plt.xticks(fontsize=14, rotation=0) 
+  plt.subplots_adjust(bottom = 0.13, left = 0.15, right = 0.15)  
+  
+  return 
+
+

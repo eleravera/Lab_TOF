@@ -9,24 +9,6 @@ import fit_functions
 import plot_functions
 import geometry
 
-def rate_and_saturation(t, ch0, ch1): 
-#Calcola il rate degli eventi
-  Delta_t = numpy.ediff1d(t)
-  mask_t = Delta_t < 0
-  t_run = t.max() -t.min() +  numpy.sum(mask_t) * 6553.6
-
-  print("Il clock dell'FPGA è ripartito %d volte durante l'acquisizione:" % numpy.sum(mask_t) )
-  print("\n%d Events recorded in %f s\nRate: %f Hz\n" % (len(t), t_run, len(t)/t_run) )
-
-  #Cotrolla se ci sono eventi che hanno saturato l'FPGA
-  saturation_ch0_mask = ch0 > 3.2
-  saturation_ch1_mask = ch1 > 3.2
-
-  print("Rate di eventi sopra soglia sul ch0:", numpy.sum(saturation_ch0_mask)/t_run)
-  print("Rate di eventi sopra soglia sul ch1:", numpy.sum(saturation_ch1_mask)/t_run)
-  print("Frazione di eventi sopra soglia: %f., %f.\n\n" % (numpy.sum(saturation_ch0_mask)/len(t), numpy.sum(saturation_ch1_mask)/len(t)))
-  return 
-  
 
 def TOF(T13, T23, costant ): 
   TOF = ( T13 + T23 ) * 0.5 - costant
