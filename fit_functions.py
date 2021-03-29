@@ -4,6 +4,12 @@ from scipy.interpolate import interp1d
 def line(x, m , q):
   return m * x +q
 
+def costant(x,  q): 
+  q = numpy.ones(len(x))*q
+  return q
+
+
+
 #Gaussiana
 def gauss(x, norm, mean, sigma): 
   return (norm) * numpy.exp(-0.5 * ((x - mean)/sigma )**2)

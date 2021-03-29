@@ -1,4 +1,4 @@
-""" Funzioni necessarie per simulare la propagazione dei fotoni all'interno dello scintillatore e di conseguenza calcolare i Delta T misurati tra i vari PMT """
+
 import sys
 sys.path.insert(1, '/home/testaovo/Scrivania/LABORATORIO/TOF/Lab_TOF')
 
@@ -49,9 +49,20 @@ def DT_23(x_s1, x_s3, delay, TOF, res = None):
   
 
 #Genera un numero casuale con distribuzione gaussiana con media 0 e sigma 1 ns, da applicare poi ad ogni segnale per simulare la risoluzione
-def resolution(N):
+def gauss_resolution(N):
   sigma_t = numpy.random.normal(0., 1., N)
   return sigma_t   
   
+
+def double_gauss_resolution(N):
+
+
+
+
+
+
+
+  return sigma_t 
+
   
   

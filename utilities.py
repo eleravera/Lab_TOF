@@ -95,12 +95,12 @@ def rate_and_saturation(t, ch0, ch1):
   return 
   
   
-def make_opt_string(opt, pcov, s = ''):
+def make_opt_string(opt, pcov, s = '', s_f = ''):
   numpy.set_printoptions(linewidth=numpy.inf, precision=5)
   opt_err = numpy.sqrt(pcov.diagonal())
   array_str = numpy.array_str(numpy.concatenate((opt, opt_err)) )
   array_str = array_str.strip('[]')  
-  string = s + ' ' + array_str + '\n'
+  string = s + ' ' + array_str + s_f + '\n'
 
   return string  
   

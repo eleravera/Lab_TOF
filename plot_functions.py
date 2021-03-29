@@ -8,19 +8,19 @@ import fit_functions
 import utilities
 
 #Disegna un istogramma e se attiva la flag ne fa il fit
-def histogram(x, xlabel, ylabel, bins = None, range = None, f=True, density = False, title = None):
+def histogram(x, xlabel, ylabel, bins = None, range = None, f=True, density = False, title = None, legend = None):
   if(bins is None ): 
     bins = int(numpy.sqrt(len(x)))
   if (range is None):
    range = (x.min(), x.max()) 
 
   plt.figure()
-  n, bins, patches = plt.hist(x,  bins = bins, range = range, density = density)
+  n, bins, patches = plt.hist(x,  bins = bins, range = range, density = density, label = legend)
   set_plot(xlabel, ylabel, title = title)
     
   if(f is True): 
     bin_centers = 0.5 * (bins[1:] + bins[:-1]) 
-    p0 = [len(x), numpy.mean(x), 1.]
+    p0 = [len(x), numpy.mean(x), numpy.std(x)]
     mask = (n > 0.) 
     opt, pcov = curve_fit(fit_functions.gauss, bin_centers[mask], n[mask], sigma = numpy.sqrt(n[mask]), p0 = p0)    
     results = ''
@@ -104,7 +104,7 @@ def scatter_plot(x, y, xlabel, ylabel):
   return   
 
 #Disegna l'istogramma 2D di due variabili  
-def hist2d(x, y, xlabel, ylabel, bins=None, range_x = None, range_y = None):
+def hist2d(x, y, xlabel, ylabel, bins=None, range_x = None, range_y = None, norm = None):
   plt.figure()
   if (range_x is None):
     range_x = (x.min(), x.max()) 
@@ -113,7 +113,7 @@ def hist2d(x, y, xlabel, ylabel, bins=None, range_x = None, range_y = None):
    
   if(bins is None ): 
     bins = int(numpy.sqrt(len(x))) 
-  plt.hist2d(x, y,  bins=bins , range = (range_x, range_y), norm=LogNorm())  
+  plt.hist2d(x, y,  bins=bins , range = (range_x, range_y), norm=norm)  
   set_plot(xlabel, ylabel, title=None)
   plt.colorbar()
   return   
@@ -158,9 +158,36 @@ def line_fit(x, y, dy, xlabel, ylabel, title = ''):
     plt.errorbar(x, res, yerr = dy, fmt = '.')
   
     set_plot(xlabel, "residui", title = '')
+    return opt, pcov
+
+def costant_fit(x, y, dy, xlabel, ylabel, title = ''):
+    p0 = [1.,]
+    opt, pcov = curve_fit(fit_functions.costant, x, y, sigma = dy)    
+
+    res = y-fit_functions.costant(x, opt)
+    chi2 = (res**2)/(dy**2)
+    chi2 = chi2.sum()
+    ndof = len(x) - 1
+  
+    plt.figure()
+    plt.subplot(2, 1, 1) 
+    plt.errorbar(x, y, yerr = dy, xerr = None, fmt = '.')
+
+  
+
+    legend = fit_legend(opt, numpy.sqrt(pcov) , 'q', 'ns', chi2, ndof)
+    x_new = numpy.linspace(0., 300., 1000)
+    plt.plot(x_new, fit_functions.costant(x_new, opt), 'r', label = legend)
+    set_plot(xlabel, ylabel, title = title)  
+    
+    plt.subplot(2, 1, 2)
+    plt.errorbar(x, res, yerr = dy, fmt = '.')
+  
+    set_plot(xlabel, "residui", title = '')
     print(legend)
     return opt, pcov
-  
+
+
   
 def set_plot(xlabel, ylabel, title = ''):
 
@@ -182,6 +209,7 @@ def fit_legend(param_values, param_errors, param_names, param_units, chi2, ndof)
   
   
   
+"""
 def set_double_axes(xlabel, ylabel1, ylabel2, title = ''):
 
   fig, ax = plt.subplots()
@@ -199,4 +227,4 @@ def set_double_axes(xlabel, ylabel1, ylabel2, title = ''):
   
   return 
 
-
+"""

@@ -25,7 +25,7 @@ def convolution_and_fit(T_sim, T_measured, xlabel, ylabel, data_bins, data_range
     plt.plot(x, polynomial_f(x), '-', label = 'Spline geometria')
     plot_functions.set_plot(xlabel, ylabel, title='Simulazione Monte Carlo')
     if save_fig ==True:
-      plt.savefig('dati_risoluzione/plot/spline%s.pdf' % figlabel, format = 'pdf')    
+      plt.savefig('risoluzione/plot/spline%s.pdf' % figlabel, format = 'pdf')    
         
     data_mean = T_measured.mean()
     p0 = [0.15, len(T_measured)/data_bins,  data_mean - 1., 4., data_mean, 0.9]
@@ -36,7 +36,7 @@ def convolution_and_fit(T_sim, T_measured, xlabel, ylabel, data_bins, data_range
     opt_true, pcov_true = plot_functions.fit2gauss(T_measured, xlabel, ylabel, bins = data_bins, range=data_range, f = True, p0=p0,
     bounds = bounds, title = title)
     if save_fig ==True:    
-      plt.savefig('dati_risoluzione/plot/2gauss_fit%s.pdf' % figlabel, format = 'pdf')    
+      plt.savefig('risoluzione/plot/2gauss_fit%s.pdf' % figlabel, format = 'pdf')    
     
     convolved_fit_function = fit_functions.create_convolution(polynomial_f, fit_functions.two_gauss)
     #Fa il fit  
@@ -71,7 +71,7 @@ def convolution_and_fit(T_sim, T_measured, xlabel, ylabel, data_bins, data_range
     plot_functions.set_plot(xlabel, ylabel, title = title)
 
     if save_fig ==True:
-      plt.savefig('dati_risoluzione/plot/conv_fit%s.pdf' % figlabel, format = 'pdf')    
+      plt.savefig('risoluzione/plot/conv_fit%s.pdf' % figlabel, format = 'pdf')    
     
     
     plt.figure()
@@ -80,7 +80,7 @@ def convolution_and_fit(T_sim, T_measured, xlabel, ylabel, data_bins, data_range
     plt.plot(x_grid - middle_point, fit_functions.two_gauss(x_grid, *opt)/integral, 'r-', label='Response function')     
     plot_functions.set_plot('Time [s]', 'pdf', title = 'Risoluzione ')
     if save_fig ==True:
-      plt.savefig('dati_risoluzione/plot/risoluzione%s.pdf' % figlabel, format = 'pdf')
+      plt.savefig('risoluzione/plot/risoluzione%s.pdf' % figlabel, format = 'pdf')
     
     return opt_true, pcov_true, param_values, pcov
 
@@ -135,10 +135,10 @@ if __name__ == '__main__' :
     param_conv_fit = utilities.make_opt_string(opt_conv, pcov_conv, s = string_x_n)
 
 
-    with open("T13_2gauss.txt", "a") as output_file:
+    with open("risoluzione/T13_2gauss.txt", "a") as output_file:
         output_file.write(param_2gauss_fit)
  
-    with open("T13_conv.txt", "a") as output_file:
+    with open("risoluzione/T13_conv.txt", "a") as output_file:
         output_file.write(param_conv_fit)
         
     print("\n\n-----------------------------------\n\n")
@@ -155,10 +155,10 @@ if __name__ == '__main__' :
     print(param_2gauss_fit, '\n')
     print(param_conv_fit)
 
-    with open("T23_2gauss.txt", "a") as output_file:
+    with open("risoluzione/T23_2gauss.txt", "a") as output_file:
         output_file.write(param_2gauss_fit)
  
-    with open("T23_conv.txt", "a") as output_file:
+    with open("risoluzione/T23_conv.txt", "a") as output_file:
         output_file.write(param_conv_fit)
 
     print("\n\n-------------------------------------------------\n\n")
@@ -171,12 +171,12 @@ if __name__ == '__main__' :
     figlabel = position + 'cm'
     opt_true, pcov_true = plot_functions.fit2gauss(tof_cost, "$(T_{13}+T_{23})*0.5[ns]$",  "entries/bin", bins = data_bins, range = data_range, f = True, p0= p0, bounds = bounds, title = title)
     if save_fig ==True:
-      plt.savefig('dati_risoluzione/plot/tof_costant_%s.pdf' % figlabel, format = 'pdf')    
+      plt.savefig('risoluzione/plot/tof_costant_%s.pdf' % figlabel, format = 'pdf')    
     
     param_2gauss_fit = utilities.make_opt_string(opt_true, pcov_true, s = string_x_n)
     print(param_2gauss_fit)      
 
-    with open("TOF_cost.txt", "a") as output_file:
+    with open("risoluzione/TOF_cost.txt", "a") as output_file:
         output_file.write(param_2gauss_fit)
  
     print("\n\n---------------------------------------------------\n\n")
@@ -185,19 +185,17 @@ if __name__ == '__main__' :
     
     p0 = [0.2, len(T12),  T12.mean() , 4., T12.mean(), 0.9]    
     bounds = (0.1, 0., T12.mean()-2, 1., T12.mean()-2 , 0.3 ), (0.4, numpy.inf, T12.mean()+2, 6., T12.mean()+2, 1.)
-
-
-
+    
     title = '%s cm , %d eventi %d secondi, %s' % (position, len(tof_cost), t_run, date)
     figlabel = position + 'cm'
     opt_true, pcov_true = plot_functions.fit2gauss(T12, "$(T_{13}-T_{23}) [ns]$",  "entries/bin", bins = data_bins, range = (-30., +30), f = True, p0= p0, bounds = bounds, title = title)
     if save_fig ==True:
-      plt.savefig('dati_risoluzione/plot/T12_%s.pdf' % figlabel, format = 'pdf')    
+      plt.savefig('risoluzione/plot/T12_%s.pdf' % figlabel, format = 'pdf')    
 
     param_2gauss_fit = utilities.make_opt_string(opt_true, pcov_true, s = string_x_n)      
     print(param_2gauss_fit)
 
-    with open("T12.txt", "a") as output_file:
+    with open("risoluzione/T12.txt", "a") as output_file:
         output_file.write(param_2gauss_fit)
  
     #plt.ion()
