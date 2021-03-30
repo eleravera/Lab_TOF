@@ -29,9 +29,9 @@ def DT_12(x_s1, delay, res = None):
   return DT_12
   
 #Calcola la differenza di tempo tra l'arrivo del segnale nel PMT1 e nel PMT3 (il ritardo si applica al PMT3)
-def DT_13(x_s1, x_s3, delay, TOF, res = None): 
+def DT_13(x_s1, x_s3, y_s3, delay, TOF, res = None): 
   T_l1 = x_s1  / geometry.v_gamma 
-  T_l3 =  0.#x_s3 * (10**9)/ geometry.v_gamma 
+  T_l3 =  (geometry.s3_y + geometry.Y3 - y_s3) / geometry.v_gamma  
   if (res is None):
     res = resolution(len(x_s1), fit_functions.two_gauss,  1.98e-01, 1.068e+02, 0. , 1.74483e+00, 0.3856, 4.95658e-01 ) 
   Delta_T = (T_l3 - T_l1) * (10**9) #[ns]   
@@ -40,9 +40,9 @@ def DT_13(x_s1, x_s3, delay, TOF, res = None):
   return DT_13
   
 #Calcola la differenza di tempo tra l'arrivo del segnale nel PMT2 e nel PMT3 (il ritardo si applica al PMT3) 
-def DT_23(x_s1, x_s3, delay, TOF, res = None): 
+def DT_23(x_s1, x_s3, y_s3, delay, TOF, res = None): 
   T_l2 = (geometry.X1 - x_s1)  / geometry.v_gamma 
-  T_l3 =  0.#x_s3 * (10**9)/ geometry.v_gamma 
+  T_l3 =  (geometry.s3_y + geometry.Y3 - y_s3) / geometry.v_gamma  
   if (res is None):
     res = resolution(len(x_s1), fit_functions.two_gauss, 1.98e-01, 1.068e+02, 0. , 1.74483e+00, 0.3856, 4.95658e-01  )
   Delta_T = (T_l3 - T_l2) * (10**9) #[ns]     
@@ -50,7 +50,7 @@ def DT_23(x_s1, x_s3, delay, TOF, res = None):
   return DT_23
   
 
-#Genera un numero casuale con distribuzione gaussiana con media 0 e sigma 1 ns, da applicare poi ad ogni segnale per simulare la risoluzione
+#Genera un numero casuale con distribuzione gaussiana con media 0 e sigma = sigma ns
 def gauss_resolution(N, sigma):
   resolution = numpy.random.normal(0., sigma, N)
   return resolution   

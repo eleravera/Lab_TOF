@@ -19,8 +19,12 @@ def TOF(T13, T23, costant , save_fig = False, figlabel = ''):
   return TOF
 
 
-def T12(T13, T23, costant): 
+def T12(T13, T23, costant, save_fig = False, figlabel = ''): 
   T12 = T13 - T23 - costant
+  
+  plot_functions.histogram(T12, "T12[ns]", "dN/dT", bins = 100, f = False, title = 'T12')
+  if save_fig is True:
+    plt.savefig('plot_distribution/T12%s.pdf' % figlabel, format = 'pdf')      
   return T12
   
   

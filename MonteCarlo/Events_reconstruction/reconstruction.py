@@ -31,8 +31,8 @@ if __name__ == '__main__' :
     mask = f > 0.5
     print("efficienza/tot:", numpy.sum(f), len(f)) 
        
-    delay_T13 = numpy.ones(int(numpy.sum(f))) * 26.1
-    delay_T23 = numpy.ones(int(numpy.sum(f))) * 26.2 
+    delay_T13 = numpy.ones(int(numpy.sum(f))) * 26.1 #ns
+    delay_T23 = numpy.ones(int(numpy.sum(f))) * 26.2 #ns
     delay_T12 = delay_T13
     z_13 = 1.77
    
@@ -44,7 +44,8 @@ if __name__ == '__main__' :
       plot_functions.multiple_histogram(x1, y1, "$x [cm]$", "$y [cm]$", bins=45, density = True)      
       plot_functions.multiple_histogram(x1[mask], y1[mask], "$x_{S3} [cm]$",  "$y_{S3} [cm]$", bins=45, density = True)  
  
-
+    
+    
     ris23 = signal_propagation_functions.resolution( int(numpy.sum(f)), fit_functions.two_gauss, 1.98e-01, 1.068e+02, 0. , 1.74483e+00, 0.3856, 4.95658e-01 )
     ris13 = signal_propagation_functions.resolution( int(numpy.sum(f)), fit_functions.two_gauss, 1.98e-01, 1.068e+02, 0. , 1.74483e+00, 0.3856, 4.95658e-01 )
     T12 = signal_propagation_functions.DT_12(x1[mask], delay_T12, res = None) 

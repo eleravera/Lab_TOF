@@ -4,7 +4,11 @@ import argparse
 import datetime
 import time
 
+import sys
+sys.path.insert(1, '/home/testaovo/Scrivania/LABORATORIO/TOF/Lab_TOF')
+
 import muon_generator_functions
+import plot_functions
 
 description = ''
 options_parser = argparse.ArgumentParser(description = description)
@@ -21,7 +25,7 @@ if __name__ == '__main__' :
     plot_flag = options['plot_flag']
      
     #Genero un muone con le funzioni di muon_generator_functions nella configurazione con scintillatore 3 sotto la barra       
-    E, P, beta = muon_generator_functions.muon_energy_generator(N, muon_generator_functions.distr_energy, 150., 1.e4) 
+    E, P, beta = muon_generator_functions.muon_energy_generator(N, muon_generator_functions.distr_energy, 1.e3, 1.e4) 
     theta, phi = muon_generator_functions.muon_angle_generator(N, muon_generator_functions.dist_theta)
     
     x1, y1 = muon_generator_functions.position_on_S1_generator(N) 
@@ -54,4 +58,9 @@ if __name__ == '__main__' :
       plot_functions.multiple_histogram(x3[mask], y3[mask], "x3[mask]", "y3[mask]", bins=45)  
       plot_functions.multiple_histogram(x1, y1, "x1", "y1", bins=45)      
       plot_functions.multiple_histogram(x1[mask], y1[mask], "x1[mask]", "y1[mask]", bins=45)  
-       
+      
+      plt.ion()
+      plt.show()
+      
+      
+      
