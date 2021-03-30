@@ -242,7 +242,7 @@ def two_histogram(x, y, xlabel, ylabel, bins = None, range = None, density = Fal
   if (range is None):
    range = (x.min(), x.max()) 
   
-  n, bins = numpy.histogram(x,  bins = bins, range = range)
+  n, bins = numpy.histogram(x,  bins = bins, range = range, density = density )
   errors = numpy.sqrt(n)
   bin_centers = 0.5 * (bins[1:] + bins[:-1])
     
@@ -252,9 +252,9 @@ def two_histogram(x, y, xlabel, ylabel, bins = None, range = None, density = Fal
   dn_x = errors[mask]
     
   plt.figure()  
-  plt.errorbar(new_bins_x, n_x, yerr=dn_x, fmt='o')
+  plt.errorbar(new_bins_x, n_x, yerr=None, fmt='.b', label = 'senza pb')
   
-  n, bins = numpy.histogram(y,  bins = bins, range = range)
+  n, bins = numpy.histogram(y,  bins = bins, range = range, density = density)
   errors = numpy.sqrt(n)
   bin_centers = 0.5 * (bins[1:] + bins[:-1])
     
@@ -263,7 +263,7 @@ def two_histogram(x, y, xlabel, ylabel, bins = None, range = None, density = Fal
   n_y = n[mask]
   dn_y = errors[mask]
 
-  plt.errorbar(new_bins_y, n_y, yerr=dn_y, fmt='o')
+  plt.errorbar(new_bins_y, n_y, yerr=None, fmt='.r', label = 'con pb')
 
   set_plot(xlabel, ylabel, title = title)  
   return 

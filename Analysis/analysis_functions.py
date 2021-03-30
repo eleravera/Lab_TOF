@@ -42,7 +42,7 @@ def l(x, h, p3):
 def beta(l,  h13, TOF , save_fig = False, figlabel = ''): 
   c = geometry.c * 10**(-7) #cm/s
   beta = l / (TOF * c) 
-  plot_functions.histogram(beta, "beta [cm]", "dN/dbeta", bins= None , range = (0., 3.), f = False, title = 'beta')
+  plot_functions.histogram(beta, "$Beta [cm/ns]$", "dN/dbeta", bins= None , range = (0., 3.), f = False, title = 'beta')
   if save_fig is True:
     plt.savefig('plot_distribution/beta%s.pdf' % figlabel, format = 'pdf')   
   return beta 
