@@ -148,7 +148,6 @@ def line_fit(x, y, dy, xlabel, ylabel, title = ''):
     plt.subplot(2, 1, 1) 
     plt.errorbar(x, y, yerr = dy, xerr = None, fmt = '.')
 
-  
     param_names = ['m', 'q' ]
     param_units = ['ns/cm', 'ns']
     legend = fit_legend(opt, param_errors, param_names, param_units, chi2, ndof)
@@ -174,8 +173,6 @@ def costant_fit(x, y, dy, xlabel, ylabel, title = ''):
     plt.figure()
     plt.subplot(2, 1, 1) 
     plt.errorbar(x, y, yerr = dy, xerr = None, fmt = '.')
-
-  
 
     legend = fit_legend(opt, numpy.sqrt(pcov) , 'q', 'ns', chi2, ndof)
     x_new = numpy.linspace(0., 300., 1000)
@@ -203,8 +200,6 @@ def proportional_fit(x, y, dy, xlabel, ylabel, title = ''):
     plt.figure()
     plt.subplot(2, 1, 1) 
     plt.errorbar(x, y, yerr = dy, xerr = None, fmt = '.')
-
-  
 
     legend = fit_legend(opt, numpy.sqrt(pcov) , 'q', 'ns', chi2, ndof)
     x_new = numpy.linspace(0., 300., 1000)
@@ -240,22 +235,35 @@ def fit_legend(param_values, param_errors, param_names, param_units, chi2, ndof)
   
   
   
-"""
-def set_double_axes(xlabel, ylabel1, ylabel2, title = ''):
 
-  fig, ax = plt.subplots()
+def two_histogram(x, y, xlabel, ylabel, bins = None, range = None, density = False, title = '', legend = ''):
+  if(bins is None ): 
+    bins = int(numpy.sqrt(len(x)))
+  if (range is None):
+   range = (x.min(), x.max()) 
+  
+  n, bins = numpy.histogram(x,  bins = bins, range = range)
+  errors = numpy.sqrt(n)
+  bin_centers = 0.5 * (bins[1:] + bins[:-1])
+    
+  mask = (n > 0.)
+  new_bins_x = bin_centers[mask]
+  n_x = n[mask]
+  dn_x = errors[mask]
+    
+  plt.figure()  
+  plt.errorbar(new_bins_x, n_x, yerr=dn_x, fmt='o')
+  
+  n, bins = numpy.histogram(y,  bins = bins, range = range)
+  errors = numpy.sqrt(n)
+  bin_centers = 0.5 * (bins[1:] + bins[:-1])
+    
+  mask = (n > 0.)
+  new_bins_y = bin_centers[mask]
+  n_y = n[mask]
+  dn_y = errors[mask]
 
-  plt.title(title, fontsize=12)
-  #fig, ax = plt.subplots(constrained_layout = True)
-  ax.set_xlabel(xlabel, fontsize=14)
-  
-  ax.set_ylabel(ylabel1, fontsize=14, color='g')
-  secax = ax.secondary_yaxis('right')
-  secax.set_ylabel(ylabel2, fontsize=14, color = 'b')
-  plt.yticks(fontsize=14, rotation=0)
-  plt.xticks(fontsize=14, rotation=0) 
-  plt.subplots_adjust(bottom = 0.13, left = 0.15, right = 0.15)  
-  
+  plt.errorbar(new_bins_y, n_y, yerr=dn_y, fmt='o')
+
+  set_plot(xlabel, ylabel, title = title)  
   return 
-
-"""

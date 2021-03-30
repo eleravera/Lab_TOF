@@ -36,7 +36,6 @@ def DT_13(x_s1, x_s3, y_s3, delay, TOF, res = None):
     res = resolution(len(x_s1), fit_functions.two_gauss,  1.98e-01, 1.068e+02, 0. , 1.74483e+00, 0.3856, 4.95658e-01 ) 
   Delta_T = (T_l3 - T_l1) * (10**9) #[ns]   
   DT_13 = Delta_T + delay + TOF + res
-
   return DT_13
   
 #Calcola la differenza di tempo tra l'arrivo del segnale nel PMT2 e nel PMT3 (il ritardo si applica al PMT3) 
@@ -45,7 +44,7 @@ def DT_23(x_s1, x_s3, y_s3, delay, TOF, res = None):
   T_l3 =  (geometry.s3_y + geometry.Y3 - y_s3) / geometry.v_gamma  
   if (res is None):
     res = resolution(len(x_s1), fit_functions.two_gauss, 1.98e-01, 1.068e+02, 0. , 1.74483e+00, 0.3856, 4.95658e-01  )
-  Delta_T = (T_l3 - T_l2) * (10**9) #[ns]     
+  Delta_T = (T_l3 - T_l2) * (10**9) #[ns]   
   DT_23 = Delta_T + delay + TOF + res
   return DT_23
   

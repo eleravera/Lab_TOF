@@ -30,7 +30,7 @@ if __name__ == '__main__' :
     E, P, beta, x1, y1, theta, phi, x3, y3, f  = numpy.loadtxt(input_file, unpack = True)
     mask = f > 0.5
     print("efficienza/tot:", numpy.sum(f), len(f)) 
-       
+           
     delay_T13 = numpy.ones(int(numpy.sum(f))) * 26.1 #ns
     delay_T23 = numpy.ones(int(numpy.sum(f))) * 26.2 #ns
     delay_T12 = delay_T13
@@ -50,8 +50,8 @@ if __name__ == '__main__' :
     ris13 = signal_propagation_functions.resolution( int(numpy.sum(f)), fit_functions.two_gauss, 1.98e-01, 1.068e+02, 0. , 1.74483e+00, 0.3856, 4.95658e-01 )
     T12 = signal_propagation_functions.DT_12(x1[mask], delay_T12, res = None) 
     TOF_true = signal_propagation_functions.Time_Of_Flight(x1[mask], x3[mask], y1[mask], y3[mask], z_13, beta[mask])   
-    T13 = signal_propagation_functions.DT_13(x1[mask], x3[mask], delay_T13, TOF_true, ris13) 
-    T23 = signal_propagation_functions.DT_23(x1[mask], x3[mask], delay_T23, TOF_true, ris23) 
+    T13 = signal_propagation_functions.DT_13(x1[mask], x3[mask], y3[mask], delay_T13, TOF_true, res = ris13) 
+    T23 = signal_propagation_functions.DT_23(x1[mask], x3[mask], y3[mask], delay_T23, TOF_true, res = ris23) 
 
 
 
