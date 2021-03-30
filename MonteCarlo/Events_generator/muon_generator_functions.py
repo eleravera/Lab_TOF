@@ -94,3 +94,19 @@ def propagation_from_S1_to_S3(x_s1, y_s1, theta_muon, phi_muon):
   mask = ((x_s3 > (geometry.X1-geometry.X3)*0.5) * (x_s3 < (geometry.X1+geometry.X3)*0.5) * (y_s3<geometry.Y3/2) * (y_s3>-geometry.Y3/2))  
   return x_s3, y_s3, mask, z
   
+  
+  
+def resolution(N, pdf, *args ):
+  dt = numpy.linspace(-5., 5., 1000)
+  cdf_y  = numpy.zeros(N)
+  for i in range(len(dt)):
+    y, rest = quad(pdf, dt[0], dt[i], args = args)  
+    cdf_y[i] = y 
+  cdf_y, unique_indices = numpy.unique(cdf_y, return_index=True)
+  cdf_y /= cdf_y[-1]
+  dt = dt[unique_indices] 
+  funzione = interp1d(cdf_y, dt)
+  x = numpy.random.uniform(0., 1., N)
+  res = funzione(x)
+  return res   
+  

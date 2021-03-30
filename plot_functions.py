@@ -8,7 +8,7 @@ import fit_functions
 import utilities
 
 #Disegna un istogramma e se attiva la flag ne fa il fit
-def histogram(x, xlabel, ylabel, bins = None, range = None, f=True, density = False, title = None, legend = None):
+def histogram(x, xlabel, ylabel, bins = None, range = None, f=True, density = False, title = '', legend = ''):
   if(bins is None ): 
     bins = int(numpy.sqrt(len(x)))
   if (range is None):
@@ -104,18 +104,20 @@ def scatter_plot(x, y, xlabel, ylabel):
   return   
 
 #Disegna l'istogramma 2D di due variabili  
-def hist2d(x, y, xlabel, ylabel, bins=None, range_x = None, range_y = None, norm = None):
+def hist2d(x, y, xlabel, ylabel, bins=None, range_x = None, range_y = None, norm = None, save_fig = False, figlabel = ''):
   plt.figure()
   if (range_x is None):
     range_x = (x.min(), x.max()) 
   if (range_y is None):
     range_y = (y.min(), y.max())   
-   
   if(bins is None ): 
-    bins = int(numpy.sqrt(len(x))) 
+    bins = int(numpy.sqrt(len(x)))
+
   plt.hist2d(x, y,  bins=bins , range = (range_x, range_y), norm=norm)  
   set_plot(xlabel, ylabel, title=None)
   plt.colorbar()
+  if save_fig is True:
+    plt.savefig('plot_distribution/hist2d%s.pdf' % figlabel, format = 'pdf')   
   return   
 
   
@@ -178,6 +180,35 @@ def costant_fit(x, y, dy, xlabel, ylabel, title = ''):
     legend = fit_legend(opt, numpy.sqrt(pcov) , 'q', 'ns', chi2, ndof)
     x_new = numpy.linspace(0., 300., 1000)
     plt.plot(x_new, fit_functions.costant(x_new, opt), 'r', label = legend)
+    set_plot(xlabel, ylabel, title = title)  
+    
+    plt.subplot(2, 1, 2)
+    plt.errorbar(x, res, yerr = dy, fmt = '.')
+  
+    set_plot(xlabel, "residui", title = '')
+    print(legend)
+    return opt, pcov
+
+
+
+def proportional_fit(x, y, dy, xlabel, ylabel, title = ''):
+    p0 = [1.,]
+    opt, pcov = curve_fit(fit_functions.proportional, x, y, sigma = dy)    
+
+    res = y-fit_functions.proportional(x, opt)
+    chi2 = (res**2)/(dy**2)
+    chi2 = chi2.sum()
+    ndof = len(x) - 1
+  
+    plt.figure()
+    plt.subplot(2, 1, 1) 
+    plt.errorbar(x, y, yerr = dy, xerr = None, fmt = '.')
+
+  
+
+    legend = fit_legend(opt, numpy.sqrt(pcov) , 'q', 'ns', chi2, ndof)
+    x_new = numpy.linspace(0., 300., 1000)
+    plt.plot(x_new, fit_functions.proportional(x_new, opt), 'r', label = legend)
     set_plot(xlabel, ylabel, title = title)  
     
     plt.subplot(2, 1, 2)

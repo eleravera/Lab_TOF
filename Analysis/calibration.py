@@ -27,9 +27,9 @@ if __name__ == '__main__' :
 
     #T13 vs x
     input_file = 'risoluzione/T13_2gauss.txt'
-    x, n, fraction, norm, mean1, sigma1, mean2, sigma2, dfraction, dnorm, dmean1, dsigma1, dmean2, dsigma2  = numpy.loadtxt(input_file, unpack = True)
+    x, n_13, fraction, norm, mean1_13, sigma1_13, mean2_13, sigma2_13, dfraction, dnorm, dmean1, dsigma1, dmean2_13, dsigma2  = numpy.loadtxt(input_file, unpack = True)
     #sigma2/numpy.sqrt(n)
-    opt, pcov = plot_functions.line_fit(x, mean2, dmean2,  "x [cm]", "$T_{13}[ns]$" , title = '$T_{13}$ vs x')
+    opt, pcov = plot_functions.line_fit(x, mean2_13, dmean2_13,  "x [cm]", "$T_{13}[ns]$" , title = '$T_{13}$ vs x')
     c = '  %s  %s' % (1/opt[0], numpy.sqrt(pcov[0][0]/(opt[0])**2))
     param_from_fit_T13 = utilities.make_opt_string(opt, pcov, s_f = c)
     print(param_from_fit_T13)
@@ -40,10 +40,9 @@ if __name__ == '__main__' :
     print("\n----------------------------------------\n")
 
     #T23 vs x
-    input_file = 'risoluzione/T23_2gauss.txt'
-    x, n, fraction, norm, mean1, sigma1, mean2, sigma2, dfraction, dnorm, dmean1, dsigma1, dmean2, dsigma2  = numpy.loadtxt(input_file, unpack = True)
+    x, n_23, fraction, norm, mean1_23, sigma1_23, mean2_23, sigma2_23, dfraction, dnorm, dmean1, dsigma1, dmean2_23, dsigma2  = numpy.loadtxt(input_file, unpack = True)
 
-    opt, pcov = plot_functions.line_fit(x, mean2, dmean2,  "x [cm]", "$T_{23}[ns]$", title = '$T_{23}$ vs x' )
+    opt, pcov = plot_functions.line_fit(x, mean2_23, dmean2_23,  "x [cm]", "$T_{23}[ns]$", title = '$T_{23}$ vs x' )
     opt[1] = fit_functions.line(280., *opt) 
     c = '  %s  %s' % (1/opt[0], numpy.sqrt(pcov[0][0]/(opt[0])**2))
     param_from_fit_T23 = utilities.make_opt_string(opt, pcov, s_f = c)    
@@ -51,6 +50,10 @@ if __name__ == '__main__' :
     
     if save_fig ==True:
       plt.savefig('vs_x/T23_vs_x.pdf', format = 'pdf')    
+   
+    #plt.figure()
+    #plt.plot(mean2_13 + mean2_23, mean2_13-mean2_23, '.')
+    
     
     
     print("\n----------------------------------------\n")

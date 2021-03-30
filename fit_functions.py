@@ -1,8 +1,13 @@
 import numpy
 from scipy.interpolate import interp1d
+
 #Retta
 def line(x, m , q):
   return m * x +q
+
+def proportional(x, m ):
+  return m * x
+
 
 def costant(x,  q): 
   q = numpy.ones(len(x))*q
