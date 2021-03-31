@@ -69,12 +69,12 @@ def TAC_scale(ch0, ch1, scale = 200):
   t23 = T23 * scale/10 #[ns]
   t13 = T13 * scale/10 #[ns]
 
-  mask_t13 = t13 > 2.
-  mask_t23 = t23 > 2.
-  mask = mask_t13 * mask_t23
-  T13 = t13[mask]
-  T23 = t23[mask]
-  print("Numero di eventi con Ti3 < 3ns:", numpy.sum(mask))
+  #mask_t13 = t13 > 2.
+  #mask_t23 = t23 > 2.
+  #mask = mask_t13 * mask_t23
+  T13 = t13#[mask]
+  T23 = t23#[mask]
+  #print("Numero di eventi con Ti3 < 3ns:", numpy.sum(mask))
   
   return T13, T23
 

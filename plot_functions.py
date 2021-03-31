@@ -234,15 +234,15 @@ def fit_legend(param_values, param_errors, param_names, param_units, chi2, ndof)
   return legend
   
   
-  
-
+ 
 def two_histogram(x, y, xlabel, ylabel, bins = None, range = None, density = False, title = '', legend = ''):
   if(bins is None ): 
     bins = int(numpy.sqrt(len(x)))
   if (range is None):
    range = (x.min(), x.max()) 
   
-  n, bins = numpy.histogram(x,  bins = bins, range = range, density = density )
+  n, bins = numpy.histogram(x,  bins = bins, range = range)
+  n = n/n.sum()
   errors = numpy.sqrt(n)
   bin_centers = 0.5 * (bins[1:] + bins[:-1])
     
@@ -255,6 +255,7 @@ def two_histogram(x, y, xlabel, ylabel, bins = None, range = None, density = Fal
   plt.errorbar(new_bins_x, n_x, yerr=None, fmt='.b', label = 'senza pb')
   
   n, bins = numpy.histogram(y,  bins = bins, range = range, density = density)
+  n = n/n.sum()
   errors = numpy.sqrt(n)
   bin_centers = 0.5 * (bins[1:] + bins[:-1])
     

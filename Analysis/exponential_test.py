@@ -28,7 +28,10 @@ if __name__ == '__main__' :
     mask = Delta_t > 0.
     Delta_t = Delta_t[mask]
     print("Delta t max: ", Delta_t.max())
-
+    
+    print(Delta_t)
+    
+    
     range = (0., 60.)
     n_bins = 20
     
@@ -58,6 +61,6 @@ if __name__ == '__main__' :
     bin_grid = numpy.linspace(*range, 1000)
     plt.plot(bin_grid, fit_functions.exponential(bin_grid, *opt), '-r', label = legend)   
     plot_functions.set_plot("$\Delta t [s]$", "entries/bin", title = title)
-
+    
     plt.ion()
     plt.show()

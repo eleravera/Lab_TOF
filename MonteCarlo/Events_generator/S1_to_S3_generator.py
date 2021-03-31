@@ -25,7 +25,7 @@ if __name__ == '__main__' :
     plot_flag = options['plot_flag']
      
     #Genero un muone con le funzioni di muon_generator_functions nella configurazione con scintillatore 3 sotto la barra       
-    E, P, beta = muon_generator_functions.muon_energy_generator(N, muon_generator_functions.distr_energy, 1.e3, 1.e4) 
+    E, P, beta = muon_generator_functions.muon_energy_generator(N, muon_generator_functions.distr_energy, 1.e4, 1.e5) 
     theta, phi = muon_generator_functions.muon_angle_generator(N, muon_generator_functions.dist_theta)
     
     x1, y1 = muon_generator_functions.position_on_S1_generator(N) 
@@ -45,7 +45,7 @@ if __name__ == '__main__' :
     if(output_file_events.endswith('.txt')): 
       header ='%s \nE[MeV], P [MeV], beta, x1[m], y1[m], theta, phi, x3[m], y3[m], flag\n' % datetime.datetime.now()
       fmt = ['%.4f', '%.4f', '%.4f', '%.4f', '%.6f', '%.2f', '%.2f', '%.4f', '%.6f', '%d']
-      numpy.savetxt(output_file_events, numpy.transpose([E, P, beta, x1, y1, theta, phi, x3, y3, f]) , fmt=fmt, header=header)
+      numpy.savetxt(output_file_events, numpy.transpose([E[mask], P[mask], beta[mask], x1[mask], y1[mask], theta[mask], phi[mask], x3[mask], y3[mask], f[mask]]) , fmt=fmt, header=header)
       print("Output file saved!\n\n")
       
     print("Time of execution: %s seconds " % (time.time() - start_time))

@@ -44,16 +44,10 @@ if __name__ == '__main__' :
       plot_functions.multiple_histogram(x1, y1, "$x [cm]$", "$y [cm]$", bins=45, density = True)      
       plot_functions.multiple_histogram(x1[mask], y1[mask], "$x_{S3} [cm]$",  "$y_{S3} [cm]$", bins=45, density = True)  
  
-    
-    
-    ris23 = signal_propagation_functions.resolution( int(numpy.sum(f)), fit_functions.two_gauss, 1.98e-01, 1.068e+02, 0. , 1.74483e+00, 0.3856, 4.95658e-01 )
-    ris13 = signal_propagation_functions.resolution( int(numpy.sum(f)), fit_functions.two_gauss, 1.98e-01, 1.068e+02, 0. , 1.74483e+00, 0.3856, 4.95658e-01 )
-    T12 = signal_propagation_functions.DT_12(x1[mask], delay_T12, res = None) 
+    T12 = signal_propagation_functions.DT_12(x1[mask], delay_T12, res = 0.) 
     TOF_true = signal_propagation_functions.Time_Of_Flight(x1[mask], x3[mask], y1[mask], y3[mask], z_13, beta[mask])   
-    T13 = signal_propagation_functions.DT_13(x1[mask], x3[mask], y3[mask], delay_T13, TOF_true, res = ris13) 
-    T23 = signal_propagation_functions.DT_23(x1[mask], x3[mask], y3[mask], delay_T23, TOF_true, res = ris23) 
-
-
+    T13, res13 = signal_propagation_functions.DT_13(x1[mask], x3[mask], y3[mask], delay_T13, TOF_true, res = None) 
+    T23, res23 = signal_propagation_functions.DT_23(x1[mask], x3[mask], y3[mask], delay_T23, TOF_true, res = None) 
 
     plot_functions.multiple_histogram(x1[mask], x3[mask], "x1[mask]", "x3[mask]", bins=45)
     plot_functions.multiple_histogram(T13, T23, "T13", "T23", bins=45)       
@@ -62,11 +56,7 @@ if __name__ == '__main__' :
 
     plot_functions.histogram(TOF_true, "TOF_true [ns]", "dN/dTOF", bins=100, range = (6., 9.), f = False)   
     plot_functions.hist2d(T23, T13, "T23", "T13", range_x = (15., 40.), range_y = (15., 40.)) 
-    
-    res = signal_propagation_functions.resolution( int(numpy.sum(f)), fit_functions.two_gauss, 1.98e-01, 1.068e+02, 0. , 1.74483e+00, 0.3856, 4.95658e-01 )
-    plot_functions.histogram(res, "gauss_resolution [ns]", "dN/dres", bins = 100, range = (-5., +5), f=False)            
-
-        
+           
     r1_23, p1_23 = pearsonr(T12, T13)
     print("\n\nr, p T12 and T13:", r1_23, p1_23)
     r12_3, p12_3 = pearsonr(T23, T13)
@@ -76,7 +66,7 @@ if __name__ == '__main__' :
     if(output_File.endswith('.txt')): 
       header ='%s \n T23[ns] ris23[ns] T13[ns] ris13[ns] T12[ns] TOF_true[ns] \n'
       fmt = ['%.4f', '%.4f', '%.4f', '%.4f', '%.4f', '%.4f']
-      numpy.savetxt(output_File, numpy.transpose([T23, ris23, T13, ris13, T12, TOF_true]) , fmt=fmt, header=header)
+      numpy.savetxt(output_File, numpy.transpose([T23, res23, T13, res13, T12, TOF_true]) , fmt=fmt, header=header)
       print("Output file saved!\n\n")
 
     plt.ion()

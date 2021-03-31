@@ -47,7 +47,9 @@ def beta(l,  h13, TOF , save_fig = False, figlabel = ''):
     plt.savefig('plot_distribution/beta%s.pdf' % figlabel, format = 'pdf')   
   return beta 
 
-  
+
+
+
 def l_vs_TOF(l, TOF, lmin, lmax, n_bins):
   l_bins = numpy.linspace(lmin , lmax, n_bins)
   mean_tof = []
