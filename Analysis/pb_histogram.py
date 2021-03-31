@@ -31,6 +31,7 @@ if __name__ == '__main__' :
     
     t, ch0,  ch1  = numpy.loadtxt(input_file, unpack = True)
     utilities.rate_and_saturation(t, ch0, ch1)
+    t_run = utilities.acquisition_duration(t)
     T13, T23 = utilities.TAC_scale(ch0, ch1) 
     mask = (T23 > 1.) * (T13 > 1.) * (T23 < 65.) * (T13 < 65.)
     T13 = T13[mask]
@@ -40,6 +41,7 @@ if __name__ == '__main__' :
     t, ch0,  ch1  = numpy.loadtxt(input_data_file_pb, unpack = True)
     utilities.rate_and_saturation(t, ch0, ch1)
     T13_pb, T23_pb = utilities.TAC_scale(ch0, ch1) 
+    t_run_pb = utilities.acquisition_duration(t)
     mask = (T23_pb > 1.) * (T13_pb > 1.) * (T23_pb < 65.) * (T13_pb < 65.)
     T13_pb = T13_pb[mask]
     T23_pb = T23_pb[mask]

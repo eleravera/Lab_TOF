@@ -99,12 +99,13 @@ def scatter_plot(x, y, xlabel, ylabel):
   
   set_plot(xlabel, ylabel, title=None)
   
-  plt.grid(True)
-  
+  plt.grid(True)  
   return   
 
+
+
 #Disegna l'istogramma 2D di due variabili  
-def hist2d(x, y, xlabel, ylabel, bins=None, range_x = None, range_y = None, norm = None, save_fig = False, figlabel = ''):
+def hist2d(x, y, xlabel, ylabel, bins=None, range_x = None, range_y = None, norm = None, title = '', legend = ''):
   plt.figure()
   if (range_x is None):
     range_x = (x.min(), x.max()) 
@@ -112,12 +113,9 @@ def hist2d(x, y, xlabel, ylabel, bins=None, range_x = None, range_y = None, norm
     range_y = (y.min(), y.max())   
   if(bins is None ): 
     bins = int(numpy.sqrt(len(x)))
-
-  plt.hist2d(x, y,  bins=bins , range = (range_x, range_y), norm=norm)  
-  set_plot(xlabel, ylabel, title=None)
+  plt.hist2d(x, y,  bins=bins , range = (range_x, range_y), norm=norm, label = legend)  
+  set_plot(xlabel, ylabel, title=title)
   plt.colorbar()
-  if save_fig is True:
-    plt.savefig('plot_distribution/hist2d%s.pdf' % figlabel, format = 'pdf')   
   return   
 
   
@@ -201,7 +199,7 @@ def proportional_fit(x, y, dy, xlabel, ylabel, title = ''):
     plt.subplot(2, 1, 1) 
     plt.errorbar(x, y, yerr = dy, xerr = None, fmt = '.')
 
-    legend = fit_legend(opt, numpy.sqrt(pcov) , 'q', 'ns', chi2, ndof)
+    legend = fit_legend(opt, numpy.sqrt(pcov) , 'm', 'ns', chi2, ndof)
     x_new = numpy.linspace(0., 300., 1000)
     plt.plot(x_new, fit_functions.proportional(x_new, opt), 'r', label = legend)
     set_plot(xlabel, ylabel, title = title)  
