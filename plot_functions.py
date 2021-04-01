@@ -143,9 +143,8 @@ def line_fit(x, y, dy, xlabel, ylabel, title = ''):
     ndof = len(x) - len(opt)
   
     plt.figure()
-    plt.subplot(2, 1, 1) 
+    plt.subplot(2, 1, 1, sharex=True) 
     plt.errorbar(x, y, yerr = dy, xerr = None, fmt = '.')
-
     param_names = ['m', 'q' ]
     param_units = ['ns/cm', 'ns']
     legend = fit_legend(opt, param_errors, param_names, param_units, chi2, ndof)

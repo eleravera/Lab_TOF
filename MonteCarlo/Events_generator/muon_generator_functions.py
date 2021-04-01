@@ -62,7 +62,7 @@ def muon_energy_generator(N_events, pdf, xmin, xmax):
 """Posizione sullo scintillatore 3: distribuzione uniforme"""  
 def position_on_S3_generator( N_events, x): 
   x_s3 = numpy.random.uniform( (x -geometry.X3/2), (x + geometry.X3/2), N_events)
-  y_s3 = numpy.random.uniform(-geometry.Y3+geometry.Y1/2, +geometry.Y1/2, N_events)
+  y_s3 = numpy.random.uniform(-geometry.Y1/2, geometry.Y3-geometry.Y1/2, N_events)
   return x_s3, y_s3  
   
 

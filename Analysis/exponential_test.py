@@ -32,7 +32,7 @@ if __name__ == '__main__' :
     print(Delta_t)
     
     
-    range = (0., 60.)
+    range = (0., 100.)
     n_bins = 20
     
     n, bins = numpy.histogram(Delta_t,  bins = n_bins, range = range)
@@ -61,6 +61,8 @@ if __name__ == '__main__' :
     bin_grid = numpy.linspace(*range, 1000)
     plt.plot(bin_grid, fit_functions.exponential(bin_grid, *opt), '-r', label = legend)   
     plot_functions.set_plot("$\Delta t [s]$", "entries/bin", title = title)
+    
+    
     
     plt.ion()
     plt.show()

@@ -2,6 +2,7 @@ import numpy
 import matplotlib.pyplot as plt
 import argparse 
 from scipy.stats import pearsonr
+from matplotlib.colors import LogNorm
 import sys
 
 sys.path.insert(1, '/home/testaovo/Scrivania/LABORATORIO/TOF/Lab_TOF')
@@ -55,7 +56,7 @@ if __name__ == '__main__' :
     plot_functions.scatter_plot(T23, T13, "T23 [ns]", "T13 [ns]")  
 
     plot_functions.histogram(TOF_true, "TOF_true [ns]", "dN/dTOF", bins=100, range = (6., 9.), f = False)   
-    plot_functions.hist2d(T23, T13, "T23", "T13", range_x = (15., 40.), range_y = (15., 40.)) 
+    plot_functions.hist2d(T23, T13, "T23", "T13", range_x = (15., 40.), range_y = (15., 40.), norm = LogNorm()) 
            
     r1_23, p1_23 = pearsonr(T12, T13)
     print("\n\nr, p T12 and T13:", r1_23, p1_23)
@@ -64,7 +65,7 @@ if __name__ == '__main__' :
     
 
     if(output_File.endswith('.txt')): 
-      header ='%s \n T23[ns] ris23[ns] T13[ns] ris13[ns] T12[ns] TOF_true[ns] \n'
+      header ='T23[ns] ris23[ns] T13[ns] ris13[ns] T12[ns] TOF_true[ns] \n'
       fmt = ['%.4f', '%.4f', '%.4f', '%.4f', '%.4f', '%.4f']
       numpy.savetxt(output_File, numpy.transpose([T23, res23, T13, res13, T12, TOF_true]) , fmt=fmt, header=header)
       print("Output file saved!\n\n")

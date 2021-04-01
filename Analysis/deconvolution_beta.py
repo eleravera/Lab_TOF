@@ -21,14 +21,14 @@ options_parser = argparse.ArgumentParser(description = description)
 options_parser.add_argument('-input_data_file', '-f', type=str, required = True, help='Input data file')
 options_parser.add_argument('-input_simulation_file', '-s', type=str, default = None, help='Input simulation file')
 options_parser.add_argument('-save_fig', '-fig', type=bool, default = False, help='save figure')
-options_parser.add_argument('-save_file', '-fout', type=bool, default = False, help='save output file')
+options_parser.add_argument('-output_file', '-fout', type=str, default='None', help='save output file')
 
 if __name__ == '__main__' :   
     options = vars(options_parser.parse_args())  
     input_data_file = options['input_data_file']
     input_simulation_file = options['input_simulation_file']
     save_fig = options['save_fig']
-    save_file = options['save_file']  
+    output_file = options['output_file']  
  
     t, ch0,  ch1  = numpy.loadtxt(input_data_file, unpack = True)
     utilities.rate_and_saturation(t, ch0, ch1)
@@ -51,19 +51,22 @@ if __name__ == '__main__' :
     x = analysis_functions.x(T12, m )   
     l = analysis_functions.l(x, geometry.h_13_long * 100,  geometry.s3 * 100)       
     beta = analysis_functions.beta(l,  geometry.h_13_long * 100, TOF)  
-    analysis_functions.tof_beta_histogram(TOF, T12, x, beta, save_fig = save_fig, figlabel = figlabel, title = title, legend = legend)
+    analysis_functions.tof_beta_histogram(TOF, T12, x, l, beta, save_fig = save_fig, figlabel = figlabel, title = title, legend = legend)
        
     lmin = 170
     lmax = 220
     bin_tof = 6
-    l_bins_center, mean_tof, sigma_tof = analysis_functions.l_vs_TOF(l, TOF, lmin , lmax, bin_tof )
-    
-    # = utilities.make_opt_string(opt_true, pcov_true, s = string_x_n)      
-    if save_file is True:    
-      with open("TOF_vs_l%s.txt", "a") as output_file:
-        output_file.write("l_bins_center, mean_tof, sigma_tof")
-    
-           
+    l_bins_center, mean_tof, sigma_tof, n_per_bin = analysis_functions.l_vs_TOF(l, TOF, lmin , lmax, bin_tof )
+    print(" l_bins_center", l_bins_center)
+    print("mean_tof", mean_tof)
+    print(", sigma_tof", sigma_tof)
+   
+   
+    if(output_file.endswith('.txt')): 
+      header ='l_bins_center[cm], mean_tof[ns], sigma_tof[ns], n_per_bin\n' 
+      fmt = ['%.4f', '%.4f', '%.4f', '%d']
+      numpy.savetxt(output_file, numpy.transpose([l_bins_center, mean_tof, sigma_tof, n_per_bin]) , fmt=fmt, header=header)
+         
     if input_simulation_file is not None: 
       T23_sim, ris23_sim, T13_sim, ris13_sim, T12_sim, TOF_true_sim = numpy.loadtxt(input_simulation_file, unpack = True)      
       TOF_sim = analysis_functions.TOF(T13_sim, T23_sim, costant) 
@@ -71,10 +74,10 @@ if __name__ == '__main__' :
       x_sim = analysis_functions.x(T12_sim, m )   
       l_sim = analysis_functions.l(x_sim, geometry.h_13_long * 100,  geometry.s3 * 100)       
       beta_sim = analysis_functions.beta(l_sim,  geometry.h_13_long * 100, TOF_sim)  
-      analysis_functions.tof_beta_histogram(TOF_sim, T12_sim, x_sim, beta_sim, save_fig = save_fig, figlabel = figlabel, title = '', legend = legend)
+      analysis_functions.tof_beta_histogram(TOF_sim, T12_sim, x_sim, l_sim, beta_sim, save_fig = save_fig, figlabel = figlabel, title = '', legend = legend)
+
 
       #deconvoluzione 
-
       plt.figure("beta_misurato")
       n, bins, patches = plt.hist(beta,  bins = 301, range = (0., 3.), density = False, label = '')    
       

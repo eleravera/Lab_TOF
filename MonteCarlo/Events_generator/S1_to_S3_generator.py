@@ -25,7 +25,7 @@ if __name__ == '__main__' :
     plot_flag = options['plot_flag']
      
     #Genero un muone con le funzioni di muon_generator_functions nella configurazione con scintillatore 3 sotto la barra       
-    E, P, beta = muon_generator_functions.muon_energy_generator(N, muon_generator_functions.distr_energy, 1.e4, 1.e5) 
+    E, P, beta = muon_generator_functions.muon_energy_generator(N, muon_generator_functions.distr_energy, 300., 1.e5) 
     theta, phi = muon_generator_functions.muon_angle_generator(N, muon_generator_functions.dist_theta)
     
     x1, y1 = muon_generator_functions.position_on_S1_generator(N) 

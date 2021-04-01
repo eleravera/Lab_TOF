@@ -4,6 +4,7 @@ sys.path.insert(1, '/home/testaovo/Scrivania/LABORATORIO/TOF/Lab_TOF')
 import numpy
 import matplotlib.pyplot as plt
 from scipy.stats import pearsonr
+from scipy import stats
 from matplotlib.colors import LogNorm
 
 
@@ -49,7 +50,7 @@ def Ti_histogram(T13, T23, bins=None, range_T13=None, range_T23=None, norm = Non
   return 
   
   
-def tof_beta_histogram(TOF, T12, x, beta, bins=None, range_TOF=(-5, 20.), range_T12=None, range_x = (-20., 300.), range_beta = (0., 3.), legend = '', title = '', figlabel = '', save_fig = False):       
+def tof_beta_histogram(TOF, T12, x, l, beta, bins=None, range_TOF=(-5, 20.), range_T12=None, range_x = (-20., 300.), range_beta = (0., 3.), legend = '', title = '', figlabel = '', save_fig = False):       
   
   plot_functions.histogram(TOF, "TOF[ns]", "entries/bin", bins = bins, range = range_TOF, f = False, title = title, legend = legend)
   if save_fig is True:
@@ -67,9 +68,9 @@ def tof_beta_histogram(TOF, T12, x, beta, bins=None, range_TOF=(-5, 20.), range_
   if save_fig is True:
     plt.savefig('plot/beta%s.pdf' % figlabel, format = 'pdf')   
   
-  #plot_functions.hist2d(TOF, l,  "TOF [ns]", "l[cm]", bins=bins, range_x = range_TOF, range_y = (100., 300.), norm = LogNorm())   
-  #if save_fig is True:
-  #  plt.savefig('plot/tof_l_2dhist%s.pdf' % figlabel, format = 'pdf')   
+  plot_functions.hist2d(TOF, l,  "TOF [ns]", "l[cm]", bins=bins, range_x = range_TOF, range_y = None, norm = LogNorm())   
+  if save_fig is True:
+    plt.savefig('plot/tof_l_2dhist%s.pdf' % figlabel, format = 'pdf')   
   return 
   
  
@@ -77,18 +78,24 @@ def l_vs_TOF(l, TOF, lmin, lmax, n_bins):
   l_bins = numpy.linspace(lmin , lmax, n_bins)
   mean_tof = []
   sigma_tof = []
+  n_per_bin = []
   for i in range(len(l_bins)-1): 
     mask_l = (l > l_bins[i] ) * ( l < l_bins[i+1])
+    n_per_bin.append(mask_l.sum())
     plt.figure()
     n, bins, _ = plt.hist(TOF[mask_l], bins = 80, density = False)
     #opt, pcov = plot_functions.histogram(TOF[mask_l], "tof", "dn/dtof", bins = 80, f=True, density = False)
     #mean_tof.append(opt[1])
     #sigma_tof.append( numpy.sqrt(pcov.diagonal())[1] )
-    mean_tof.append(numpy.mean(TOF[mask_l]))
+    mode, counts = stats.mode(TOF[mask_l])
+    print("mode, counts:", mode, counts)
+    mean_tof.append(mode[0])
+    #mean_tof.append(numpy.mean(TOF[mask_l]))
     sigma_tof.append(numpy.std(TOF[mask_l]) / numpy.sqrt(len(TOF[mask_l])))
+  n_per_bin = numpy.array(n_per_bin)
   mean_tof = numpy.array(mean_tof)
   sigma_tof = numpy.array(sigma_tof)
   l_bins_center = 0.5 * (l_bins[1:] + l_bins[:-1])
   
-  return l_bins_center, mean_tof, sigma_tof
+  return l_bins_center, mean_tof, sigma_tof, n_per_bin
  

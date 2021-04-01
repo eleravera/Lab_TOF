@@ -36,13 +36,13 @@ if __name__ == '__main__' :
     #Calcolo l'accettanza    
     epsilon = numpy.sum(f)/N            
     print("Number of events hitting S1/Total number of events:", numpy.sum(f), "/", N, "=", epsilon)
-
+    mask = (f == 1 )
 
     #Se passato un file di uscita scrive i dati su file                
     if(output_file_events.endswith('.txt')): 
-      header ='%s\nx_input = %d \nE[MeV], P[MeV], beta, x1[m], y1[m], theta, phi, x3[m], y3[m], flag\n' % (datetime.datetime.now() , x)
+      header ='%s\nx_input = %.4f [m]\naccettanza %d / %d \nE[MeV], P[MeV], beta, x1[m], y1[m], theta, phi, x3[m], y3[m], flag\n' % (datetime.datetime.now() , x, numpy.sum(f), N)
       fmt = ['%.4f', '%.4f', '%.4f', '%.4f', '%.6f', '%.2f', '%.2f', '%.4f', '%.6f', '%d']
-      numpy.savetxt(output_file_events, numpy.transpose([E, P, beta, x1, y1, theta, phi, x3, y3, f]) , fmt=fmt, header=header)
+      numpy.savetxt(output_file_events, numpy.transpose([E[mask], P[mask], beta[mask], x1[mask], y1[mask], theta[mask], phi[mask], x3[mask], y3[mask], f[mask]]) , fmt=fmt, header=header)
       print("Output file saved!\n\n")
 
 
