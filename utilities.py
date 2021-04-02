@@ -1,7 +1,10 @@
 import numpy
 import sys
+sys.path.insert(1, '/home/testaovo/Scrivania/LABORATORIO/TOF/Lab_TOF')
+
 
 import fit_functions
+import geometry
 
 def acquisition_duration(t):
     Delta_t = numpy.ediff1d(t)
@@ -103,7 +106,6 @@ def make_opt_string(opt, pcov, s = '', s_f = ''):
   array_str = numpy.array_str(numpy.concatenate((opt, opt_err)) )
   array_str = array_str.strip('[]')  
   string = s + ' ' + array_str + s_f + '\n'
-
   return string  
   
   
@@ -112,14 +114,19 @@ def read_parameter(input_file1, input_file2):
     m, q, dm, dq, c, dc  = numpy.loadtxt(input_file1, unpack = True)
     a, b, da, db = numpy.loadtxt(input_file2, unpack = True)  
     weights = 1/dm**2  
-    m = sum(a * weights) / sum(weights)
-    dm = numpy.sqrt(dm[0]**2 + dm[1]**2 )
-    x = numpy.linspace(-10., 300., 1000)
-    costant = fit_functions.line(x, a[0], b[0])
-    costant = 17.2 #da definire in funzione di x 
-    tau_diff = q[1] - q[0] #tau23 - tau13  
-  
-    return m, dm , costant, tau_diff
+    average_m = sum(a * weights) / sum(weights)
+    daverage_m = numpy.sqrt(dm[0]**2 + dm[1]**2 )
+    
+    #x = numpy.linspace(-10., 300., 1000)
+    #costant = fit_functions.line(x, a[0], b[0])
+    costant = 17.24 #da definire in funzione di x 
+     
+    #tau13 = q[0]
+    #tau23 = m[1] * geometry.X1 * 100 + q[1]   
+    
+    tau_diff = q[1]-q[0]#tau23 - tau13    
+
+    return average_m, daverage_m , costant, tau_diff
   
   
   

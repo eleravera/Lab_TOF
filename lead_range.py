@@ -70,10 +70,14 @@ est_muon_range = est_muon_range/LEAD_DENSITY #cm
 plt.figure("Muon_range")
 plt.plot(muon_kin_ene, est_muon_range, 'b-')
 plt.xscale('log')
-plt.xlabel("kinetic energy [MeV]")
-plt.ylabel("Range [cm]")
-plt.ylim(0., 6.)
+plt.xlabel("Energia cinetica [MeV]", fontsize=14)
+plt.ylabel("Range [cm]", fontsize=14)
+plt.ylim(0., 2.)
+plt.xlim(0., 100.)
 
+plt.yticks(fontsize=14, rotation=0)
+plt.xticks(fontsize=14, rotation=0) 
+plt.subplots_adjust(bottom = 0.13, left = 0.15)  
 
 plt.ion()
 plt.show()

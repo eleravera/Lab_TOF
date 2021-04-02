@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 from scipy.stats import chisquare
 from matplotlib.colors import LogNorm
+import scipy.stats
 
 import fit_functions
 import utilities
@@ -70,7 +71,7 @@ def fit2gauss(x, xlabel, ylabel, bins = None, range = None, f=False, p0=None, bo
  
   
 #Disegna due istogrammi in due subplot  
-def multiple_histogram(var1, var2, xlabel1, xlabel2, bins = None, range_var1= None, range_var2 = None , density = False):
+def multiple_histogram(var1, var2, xlabel1, xlabel2, bins = None, range_var1= None, range_var2 = None , density = False, title =''):
   if(bins is None ): 
     bins = int(numpy.sqrt(len(var1)))
   if (range_var1 is None):
@@ -81,12 +82,12 @@ def multiple_histogram(var1, var2, xlabel1, xlabel2, bins = None, range_var1= No
   plt.figure()
   plt.subplot(1, 2, 1)
   n1, bins1, patches1 = plt.hist(var1,  bins = bins, range = range_var1, density = density)
-  ylabel1 = 'dn'
-  set_plot(xlabel1, ylabel1, title = None)
+  ylabel1 = ''
+  set_plot(xlabel1, ylabel1, title = title)
   
   plt.subplot(1, 2, 2)
-  ylabel2 = 'dn'
-  set_plot(xlabel2, ylabel2, title = None)
+  ylabel2 = ''
+  set_plot(xlabel2, ylabel2, title = title)
   n2, bins2, patches2 = plt.hist(var2,  bins = bins, range = range_var2, density = density)
   return   
   
@@ -140,14 +141,14 @@ def line_fit(x, y, xlabel, ylabel, dy = None, dx = None, err_fit = None, title =
     res = y-fit_functions.line(x, *opt)
     print(res)
     print(dy)
-    chi2 = (res**2)/(dy**2)
+    chi2 = (res**2)/(err_fit**2)
     chi2 = chi2.sum()
     ndof = len(x) - len(opt)
   
     plt.figure()
     plt.subplot(2, 1, 1) 
-    plt.xlim(0., 280.)
-    
+    plt.xlim(120., 220.)
+    plt.ylim(2., 7.)    
     plt.errorbar(x, y, yerr = dy, xerr = dx, fmt = '.')
     param_names = ['m', 'q' ]
     param_units = ['ns/cm', 'ns']
@@ -158,8 +159,8 @@ def line_fit(x, y, xlabel, ylabel, dy = None, dx = None, err_fit = None, title =
     
     plt.subplot(2, 1, 2)
     
-    plt.xlim(0., 280.)
-    plt.errorbar(x, res, yerr = dy, fmt = '.')
+    plt.xlim(120., 220.)
+    plt.errorbar(x, res, yerr = err_fit, fmt = '.')
   
     set_plot(xlabel, "residui", title = '')
     return opt, pcov
@@ -191,9 +192,9 @@ def costant_fit(x, y, dy, xlabel, ylabel, title = ''):
 
 
 
-def proportional_fit(x, y, dy, xlabel, ylabel, title = ''):
+def proportional_fit(x, y, xlabel, ylabel, dx= None, dy= None, err_fit=None, title = ''):
     p0 = [1.,]
-    opt, pcov = curve_fit(fit_functions.proportional, x, y, sigma = dy)    
+    opt, pcov = curve_fit(fit_functions.proportional, x, y, sigma = err_fit)    
 
     res = y-fit_functions.proportional(x, opt)
     chi2 = (res**2)/(dy**2)
@@ -202,7 +203,7 @@ def proportional_fit(x, y, dy, xlabel, ylabel, title = ''):
   
     plt.figure()
     plt.subplot(2, 1, 1) 
-    plt.errorbar(x, y, yerr = dy, xerr = None, fmt = '.')
+    plt.errorbar(x, y, yerr = dy, xerr = dx, fmt = '.')
 
     legend = fit_legend(opt, numpy.sqrt(pcov) , 'm', 'ns', chi2, ndof)
     x_new = numpy.linspace(0., 300., 1000)
@@ -210,7 +211,7 @@ def proportional_fit(x, y, dy, xlabel, ylabel, title = ''):
     set_plot(xlabel, ylabel, title = title)  
     
     plt.subplot(2, 1, 2)
-    plt.errorbar(x, res, yerr = dy, fmt = '.')
+    plt.errorbar(x, res, yerr = err_fit, fmt = '.')
   
     set_plot(xlabel, "residui", title = '')
     print(legend)
@@ -282,8 +283,10 @@ def two_histogram_data_MC(x, y, xlabel, ylabel, bins = None, range = None, densi
    range = (x.min(), x.max()) 
   
   n, bins = numpy.histogram(x,  bins = bins, range = range)
-  n = n/n.sum()
   errors = numpy.sqrt(n)
+  errors = errors/n.sum()
+  n = n/n.sum()
+  
   bin_centers = 0.5 * (bins[1:] + bins[:-1])
     
   mask = (n > 0.)
@@ -292,7 +295,7 @@ def two_histogram_data_MC(x, y, xlabel, ylabel, bins = None, range = None, densi
   dn_x = errors[mask]
     
   plt.figure()  
-  plt.errorbar(new_bins_x, n_x, yerr=None, fmt='.b', label = labelx)
+  plt.errorbar(new_bins_x, n_x, yerr= dn_x, fmt='.b', label = labelx)
 
   n, bins = numpy.histogram(y,  bins = bins, range = range) 
   n = n / n.sum()
@@ -303,37 +306,144 @@ def two_histogram_data_MC(x, y, xlabel, ylabel, bins = None, range = None, densi
   return   
   
   
-  
-  
- 
-def three_histogram_data_MC(x, y, z, xlabel, ylabel, bins = None, range = None, density = False, title = '', labelx = 'dati', labely = 'simulazione', labelz=''):
+def two_histogram_data_data(x, y, xlabel, ylabel, bins = None, range = None, density = False, title = '', labelx = 'dati', labely = 'dati'):
   if(bins is None ): 
     bins = int(numpy.sqrt(len(x)))
   if (range is None):
    range = (x.min(), x.max()) 
   
   n, bins = numpy.histogram(x,  bins = bins, range = range)
-  n = n/n.sum()
   errors = numpy.sqrt(n)
-  bin_centers = 0.5 * (bins[1:] + bins[:-1])
-    
+  errors = errors/n.sum()
+  n = n/n.sum()  
+  bin_centers = 0.5 * (bins[1:] + bins[:-1])    
   mask = (n > 0.)
   new_bins_x = bin_centers[mask]
   n_x = n[mask]
   dn_x = errors[mask]
-    
+  print("norm", n_x.sum())  
   plt.figure()  
-  plt.errorbar(new_bins_x, n_x, yerr=None, fmt='.b', label = labelx)
-  
+  plt.errorbar(new_bins_x, n_x, yerr= dn_x, fmt='.b', label = labelx)
+
   n, bins = numpy.histogram(y,  bins = bins, range = range) 
-  n = n / n.sum()  
-  n, bins, patches = plt.hist(bins[1:],  weights=n, bins = bins, label = labely, alpha = 0.4, color = "b")
-  print(n.sum())
-  n, bins = numpy.histogram(z,  bins = bins, range = range) 
-  n = n / n.sum()
-  n, bins, patches = plt.hist(bins[1:],  weights=n, bins = bins, label = labelz, alpha = 0.4, color ='r')
-  print(n.sum())
+  errors = numpy.sqrt(n)
+  errors = errors/n.sum()
+  n = n/n.sum()  
+  bin_centers = 0.5 * (bins[1:] + bins[:-1])    
+  mask = (n > 0.)
+  new_bins_y = bin_centers[mask]
+  n_y = n[mask]
+  dn_y = errors[mask]
+  plt.errorbar(new_bins_y, n_y, yerr= dn_y, fmt='.r', label = labely)
+  print("norm", n_y.sum())  
   set_plot(xlabel, ylabel, title = title)  
   
+  return 
+  
+ 
+def three_histogram_data(x, y, z, xlabel, ylabel, bins = None, range = None, density = False, title = '', labelx = 'dati', labely = 'simulazione', labelz=''):
+  if(bins is None ): 
+    bins = int(numpy.sqrt(len(x)))
+  if (range is None):
+   range = (x.min(), x.max()) 
+  
+  n, bins = numpy.histogram(x,  bins = bins, range = range)
+  errors = numpy.sqrt(n)
+  errors = errors/n.sum()
+  n = n/n.sum()  
+  bin_centers = 0.5 * (bins[1:] + bins[:-1])    
+  mask = (n > 0.)
+  new_bins_x = bin_centers[mask]
+  n_x = n[mask]
+  dn_x = errors[mask]
+
+  plt.figure()  
+  plt.errorbar(new_bins_x, n_x, yerr= dn_x, fmt='.b', label = labelx)
+
+  n, bins = numpy.histogram(y,  bins = bins, range = range) 
+  errors = numpy.sqrt(n)
+  errors = errors/n.sum()
+  n = n/n.sum()  
+  bin_centers = 0.5 * (bins[1:] + bins[:-1])    
+  mask = (n > 0.)
+  new_bins_y = bin_centers[mask]
+  n_y = n[mask]
+  dn_y = errors[mask]
+  plt.errorbar(new_bins_y, n_y, yerr= dn_y, fmt='.r', label = labely)
+
+  n, bins = numpy.histogram(z,  bins = bins, range = range) 
+  errors = numpy.sqrt(n)
+  errors = errors/n.sum()
+  n = n/n.sum()  
+  bin_centers = 0.5 * (bins[1:] + bins[:-1])    
+  mask = (n > 0.)
+  new_bins_z = bin_centers[mask]
+  n_z = n[mask]
+  dn_z = errors[mask]
+  plt.errorbar(new_bins_z, n_z, yerr= dn_z, fmt='.k', label = labelz)  
+  
+  statistic_xy, p_value_xy = scipy.stats.ks_2samp(x, y)
+  statistic_xz, p_value_xz = scipy.stats.ks_2samp(x, z)  
+  statistic_yz, p_value_yz = scipy.stats.ks_2samp(y, z)
+  
+  print("test senzapb,7pb: ", statistic_xy, p_value_xy)
+  print("test senzapb, 4pb: ", statistic_xz, p_value_xz)
+  print("test 7pb, 4pb: ", statistic_yz, p_value_yz)
+  
+  set_plot(xlabel, ylabel, title = title)   
+  
+  
+  plt.figure()
+
+  plt.errorbar(new_bins_z, n_z-n_y, yerr= dn_z, fmt='.k', label = labelz)  
+  
   return     
+  
+  
+def four_histogram_data_MC(x, y, z, w, xlabel, ylabel, bins = None, range = None, density = False, title = '', labelx = 'dati', labely = 'dati', labelz = 'mc', labelw = 'mc'):
+  if(bins is None ): 
+    bins = int(numpy.sqrt(len(x)))
+  if (range is None):
+   range = (x.min(), x.max()) 
+  
+  n, bins = numpy.histogram(x,  bins = bins, range = range)
+  errors = numpy.sqrt(n)
+  errors = errors/n.sum()
+  n = n/n.sum()  
+  bin_centers = 0.5 * (bins[1:] + bins[:-1])    
+  mask = (n > 0.)
+  new_bins_x = bin_centers[mask]
+  n_x = n[mask]
+  dn_x = errors[mask]
+
+  plt.figure()  
+  plt.errorbar(new_bins_x, n_x, yerr= dn_x, fmt='.b', label = labelx)
+
+  n, bins = numpy.histogram(y,  bins = bins, range = range) 
+  errors = numpy.sqrt(n)
+  errors = errors/n.sum()
+  n = n/n.sum()  
+  bin_centers = 0.5 * (bins[1:] + bins[:-1])    
+  mask = (n > 0.)
+  new_bins_y = bin_centers[mask]
+  n_y = n[mask]
+  dn_y = errors[mask]
+  plt.errorbar(new_bins_y, n_y, yerr= dn_y, fmt='.r', label = labely)
+
+  
+  n, bins = numpy.histogram(z,  bins = bins, range = range) 
+  n = n / n.sum() 
+  n, bins, patches = plt.hist(bins[1:],  weights=n, bins = bins, label = labelz, alpha = 0.2, color='b')
+  
+  n, bins = numpy.histogram(w,  bins = bins, range = range) 
+  n = n / n.sum() 
+  n, bins, patches = plt.hist(bins[1:],  weights=n, bins = bins, label = labelw, alpha = 0.2, color='r')
+    
+ 
+  set_plot(xlabel, ylabel, title = title)    
+  
+ 
+  
+  return   
+  
   

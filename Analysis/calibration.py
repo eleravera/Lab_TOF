@@ -42,6 +42,7 @@ if __name__ == '__main__' :
     print("\n----------------------------------------\n")
 
     #T23 vs x
+    input_file = 'vecchie/T23_2gauss.txt'
     x, n_23, fraction, norm, mean1_23, sigma1_23, mean2_23, sigma2_23, dfraction, dnorm, dmean1, dsigma1, dmean2_23, dsigma2  = numpy.loadtxt(input_file, unpack = True)
 
 
@@ -114,11 +115,12 @@ if __name__ == '__main__' :
 
 
     #T12 vs x
+    
     input_file = 'vecchie/T12.txt'
     x, n, fraction, norm, mean1, sigma1, mean2, sigma2, dfraction, dnorm, dmean1, dsigma1, dmean2, dsigma2  = numpy.loadtxt(input_file, unpack = True)
    
     sigma =  numpy.sqrt(dmean2**2 + (sigma_x*1.28916e-01)**2 )
-    opt, pcov = plot_functions.line_fit(x, mean2,"x [cm]", "$T_{13}-T_{23}[ns]$", dy = dmean2, dx = sigma_x, err_fit = sigma, title = '$T_{13}-T_{23}2$ vs x' )
+    opt, pcov = plot_functions.line_fit(x, mean2,"x [cm]", "$T_{13}-T_{23}[ns]$", dy = dmean2, dx = sigma_x, err_fit = sigma, title = '$T_{13}-T_{23}$ vs x' )
 
     param_from_fit_Tdiff = utilities.make_opt_string(opt, pcov)
     print(param_from_fit_Tdiff)

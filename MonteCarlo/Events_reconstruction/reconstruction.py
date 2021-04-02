@@ -35,15 +35,17 @@ if __name__ == '__main__' :
     delay_T13 = numpy.ones(int(numpy.sum(f))) * 25.0 #ns
     delay_T23 = numpy.ones(int(numpy.sum(f))) * 25.1 #ns
     delay_T12 = delay_T13
-    z_13 = 1.77
+    z_13 = 1.22
    
     if(plot_flag == True): 
-      plot_functions.multiple_histogram(theta, phi, '$\Theta[rad]$', "$\Phi[rad]$", bins = 45, range_var1 = (-numpy.pi, numpy.pi),  range_var2 = (0., numpy.pi*2), density = True)  
-      plot_functions.multiple_histogram(theta[mask], phi[mask], "$\Theta_{S3}[rad]$", "$\Phi_{S3}[rad]$", bins=45, range_var1 = (-1, 1),  range_var2 = (0., numpy.pi*2), density = True)       
-      plot_functions.multiple_histogram(x3, y3, "x3", "y3", bins=45)      
-      plot_functions.multiple_histogram(x3[mask], y3[mask], "x3[mask]", "y3[mask]", bins=45)  
-      plot_functions.multiple_histogram(x1, y1, "$x [cm]$", "$y [cm]$", bins=45, density = True)      
-      plot_functions.multiple_histogram(x1[mask], y1[mask], "$x_{S3} [cm]$",  "$y_{S3} [cm]$", bins=45, density = True)  
+      plot_functions.histogram(E, 'E [MeV]', "entries/bin", bins=70, range = (150., 3000), f = False, title = 'Spettro degli eventi generati', density = False)   
+      plot_functions.multiple_histogram(theta, phi, '$\Theta[rad]$', "$\Phi[rad]$", bins = 70, range_var1 = (-numpy.pi, numpy.pi),  range_var2 = (0., numpy.pi*2), title = ''  )
+      
+      plot_functions.multiple_histogram(theta[mask], phi[mask], "$\Theta_{S3}[rad]$", "$\Phi_{S3}[rad]$", bins=70, range_var1 = (-1, 1),  range_var2 = (0., numpy.pi*2),  title = '' )       
+      plot_functions.multiple_histogram(x3, y3, "x3", "y3", bins=100)      
+      plot_functions.multiple_histogram(x3[mask], y3[mask], "x3[mask]", "y3[mask]", bins=70)  
+      plot_functions.multiple_histogram(x1, y1, "$x [m]$", "$y [m]$", bins=70, density = True)      
+      plot_functions.multiple_histogram(x1[mask], y1[mask], "$x_{S3} [m]$",  "$y_{S3} [m]$", bins=70, density = True)  
  
     T12 = signal_propagation_functions.DT_12(x1[mask], delay_T12, res = 0.) 
     TOF_true = signal_propagation_functions.Time_Of_Flight(x1[mask], x3[mask], y1[mask], y3[mask], z_13, beta[mask])   

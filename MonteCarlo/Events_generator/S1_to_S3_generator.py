@@ -32,8 +32,8 @@ if __name__ == '__main__' :
     theta, phi = muon_generator_functions.muon_angle_generator(N, muon_generator_functions.dist_theta)
     
     x1, y1 = muon_generator_functions.position_on_S1_generator(N) 
-    x3, y3, mask, z = muon_generator_functions.propagation_from_S1_to_S3(x1, y1, theta, phi)
-    f = mask>0
+    x3, y3, mask1, z = muon_generator_functions.propagation_from_S1_to_S3(x1, y1, theta, phi)
+    f = mask1>0
     
     #Stampa i dati su terminale
     data = numpy.vstack((x1, y1, theta, phi, x3, y3, f)).T    
@@ -43,6 +43,7 @@ if __name__ == '__main__' :
     epsilon = numpy.sum(f)/N    
     print("Number of events hitting S3/Total number of events on S1:", numpy.sum(f), "/", N, "=", epsilon)
 
+    mask = numpy.full(N, True)
 
     #Se passato un file di uscita scrive i dati su file            
     if(output_file_events.endswith('.txt')): 
