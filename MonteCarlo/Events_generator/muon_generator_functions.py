@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import scipy.integrate as integrate
 from scipy.integrate import quad
 from scipy.interpolate import interp1d
+import scipy.special
 
 import geometry
 
@@ -18,7 +19,16 @@ def dist_theta(theta):
 
 #Spettro in energia dei raggi cosmici
 def distr_energy(E): 
-  return 1. / (E)**2.7   
+  return 1. / (E)**2.7
+
+def power_law(x, index, x0=1.):
+    return (x/x0)**index
+    
+def positive_erf(x, mean, sigma):
+    return 0.5 + 0.5 * scipy.special.erf((x - mean)/sigma)
+
+def spectrum(x, index, x_drop, drop_width = 1.):
+    return positive_erf(x, x_drop, drop_width)  * power_law(x, index)
 
 
 """ Genero muoni nell'angolo solido"""
@@ -40,12 +50,21 @@ def muon_angle_generator(N_events, pdf):
   return theta_muon, phi_muon
 
 
+
+def muon_energy_generator_constant(N_events, E): 
+  E_kin = numpy.full(N_events, E)
+  E_muon = E_kin + MUON_MASS
+  P_muon = numpy.sqrt( E_muon**2 - MUON_MASS **2)
+  beta_muon = P_muon / E_muon
+  return E_muon, P_muon, beta_muon
+
+
 """ Spettro piatto; energie tra 106 e 1000 MeV. Poi bisognerà cambiare e mettere lo spettro vero e proprio"""
-def muon_energy_generator(N_events, pdf, xmin, xmax): 
+def muon_energy_generator(N_events, pdf, xmin, xmax, *args): 
   e = numpy.linspace(xmin, xmax, 1000)  
   cdf_y  = numpy.full(len(e), 0.)
   for i in range(len(e)):
-    y, rest = quad(pdf, e[0], e[i])
+    y, rest = quad(pdf, e[0], e[i], args = args)
     cdf_y[i] = y       
   cdf_y, unique_indices = numpy.unique(cdf_y, return_index=True)
   cdf_y = cdf_y/cdf_y[-1]
@@ -86,7 +105,7 @@ def position_on_S1_generator( N_events ):
 
 """Calcola la posizione sul piano dello scintillatore 3 partendo dallo scintillatore 1 quando il 3 sta sotto"""  
 def propagation_from_S1_to_S3(x_s1, y_s1, theta_muon, phi_muon):
-  z = geometry.Z1/2 + geometry.Z3/2 + geometry.h_13 
+  z = geometry.Z1/2 + geometry.Z3/2 + geometry.h_13
   x_s3 = x_s1 + numpy.cos(phi_muon) * numpy.tan(theta_muon) * z 
   y_s3 = y_s1 + numpy.sin(phi_muon) * numpy.tan(theta_muon) * z 
 

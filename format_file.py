@@ -1,5 +1,8 @@
 import numpy
 import argparse
+from collections.abc import Iterable
+import logging
+logging.basicConfig(level=logging.INFO, format='%(levelname)s : %(message)s')
 
 import utilities
 
@@ -21,10 +24,15 @@ def parse_row(row, column_dict, separator=' ', terminator='\n', **fmt_opts):
     """
     """
     formatted = []
-    for name, (val_pos, err_pos) in column_dict.items():
-        val, err = row[val_pos], row[err_pos]
-        formatted.append(utilities.format_value_error(val, err, **fmt_opts))
-    return separator.join(formatted) + terminator
+    for name, pos in column_dict.items():
+        if isinstance(pos, Iterable):
+            val_pos, err_pos = int(pos[0]), int(pos[1])
+            val, err = row[val_pos], row[err_pos]
+            formatted.append(utilities.format_value_error(val, err, **fmt_opts))
+        else:
+            formatted.append(str(row[pos]))
+    formatted_row = separator.join(formatted) + terminator
+    return formatted_row
 
 
 def header_line(column_dict, start='# ', separator=' ', terminator='\n'):
@@ -38,17 +46,20 @@ def format_input_file(input_file_path, column_dict, output_file_path=None,
                       separator=' ', terminator='\n', header_start='# ', 
                       **fmt_opts):
     """ The input dictionary must contain the name of the parameters as keys 
-    and tuples of two indices as values: the position of the
-    value column and the position of the uncertainty column in the data array.
+    and either the index of the inherent column in the data array or a tuple of 
+    two indices, one for the value and one for the inherent uncertainty.
     """
+    logging.info('Opening input file {}...'.format(input_file_path))
     data = numpy.loadtxt(input_file_path, unpack=False)
+    logging.info('Done.')
     if output_file_path is None:
         output_file_path = input_file_path.replace('.txt', '_formatted.txt')
     if output_file_path.endswith('tex'):
         separator = ' & '
         terminator = '\\\ \n' # We need three backslash to get two in the file
         header_start = ''
-        fmt_opts['pm'] = '\pm'
+        fmt_opts['pm'] = '$\pm$'
+    logging.info('Writing formatted output to: {}...'.format(output_file_path))
     with open(output_file_path, 'w') as outfile:
         outfile.write(header_line(column_dict, separator=separator,
                       terminator=terminator, start=header_start))
@@ -56,13 +67,16 @@ def format_input_file(input_file_path, column_dict, output_file_path=None,
             outfile.write(parse_row(data[i, :], column_dict,
                           separator=separator, terminator=terminator,
                           **fmt_opts))
+    logging.info('Done.')
 
 
 if __name__ == '__main__':
     """
     """
     args = vars(parser.parse_args())
-    COLUMN_DICT = {'fraction'      : (2, 8),
+    COLUMN_DICT = {'x'             : 0,
+                   'num_events'    : 1,
+                   'fraction'      : (2, 8),
                    'normalization' : (3, 9),
                    'mean_1'        : (4, 10),
                    'sigma_1'       : (5, 11),

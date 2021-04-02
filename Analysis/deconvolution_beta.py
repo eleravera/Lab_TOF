@@ -43,7 +43,7 @@ if __name__ == '__main__' :
     figlabel = '_run'      
     date = ''    
     title = '%d eventi, %d secondi, %s' % (len(T13), t_run, date) 
-    analysis_functions.Ti_histogram(T13, T23, bins=n_bins, range_T13=(0., 60.), range_T23=(0., 60.), norm = LogNorm(), legend = legend, save_fig = save_fig, title = title)
+    #analysis_functions.Ti_histogram(T13, T23, bins=n_bins, range_T13=(0., 60.), range_T23=(0., 60.), norm = LogNorm(), legend = legend, save_fig = save_fig, title = title)
   
     m, dm , costant, tau_diff = utilities.read_parameter('vs_x/T13_T23_vs_x.txt', 'vs_x/Tsum_Tdiff_vs_x.txt')       
     TOF = analysis_functions.TOF(T13, T23, costant) 
@@ -53,13 +53,13 @@ if __name__ == '__main__' :
     beta = analysis_functions.beta(l,  geometry.h_13_long * 100, TOF)  
     analysis_functions.tof_beta_histogram(TOF, T12, x, l, beta, save_fig = save_fig, figlabel = figlabel, title = title, legend = legend)
        
-    lmin = 170
-    lmax = 220
-    bin_tof = 6
-    l_bins_center, mean_tof, sigma_tof, n_per_bin = analysis_functions.l_vs_TOF(l, TOF, lmin , lmax, bin_tof )
-    print(" l_bins_center", l_bins_center)
-    print("mean_tof", mean_tof)
-    print(", sigma_tof", sigma_tof)
+    #lmin = 170
+    #lmax = 220
+    #bin_tof = 6
+    #l_bins_center, mean_tof, sigma_tof, n_per_bin = analysis_functions.l_vs_TOF(l, TOF, lmin , lmax, bin_tof )
+    #print(" l_bins_center", l_bins_center)
+    #print("mean_tof", mean_tof)
+    #print(", sigma_tof", sigma_tof)
    
    
     if(output_file.endswith('.txt')): 
@@ -69,6 +69,8 @@ if __name__ == '__main__' :
          
     if input_simulation_file is not None: 
       T23_sim, ris23_sim, T13_sim, ris13_sim, T12_sim, TOF_true_sim = numpy.loadtxt(input_simulation_file, unpack = True)      
+
+      #analysis_functions.Ti_histogram(T13_sim, T23_sim, bins=n_bins, range_T13=(0., 60.), range_T23=(0., 60.), norm = LogNorm(), legend = legend, save_fig = save_fig, title = 'simulazioni')
       TOF_sim = analysis_functions.TOF(T13_sim, T23_sim, costant) 
       T12_sim = analysis_functions.T12(T13_sim, T23_sim, tau_diff)
       x_sim = analysis_functions.x(T12_sim, m )   
@@ -76,7 +78,22 @@ if __name__ == '__main__' :
       beta_sim = analysis_functions.beta(l_sim,  geometry.h_13_long * 100, TOF_sim)  
       analysis_functions.tof_beta_histogram(TOF_sim, T12_sim, x_sim, l_sim, beta_sim, save_fig = save_fig, figlabel = figlabel, title = '', legend = legend)
 
-
+      plot_functions.two_histogram_data_MC(T13, T13_sim, "$T_{13}$", "", bins = 100, density = False, title = title, labelx = 'dati', labely= 'simulazione', range = (0., 60.))
+      
+      plot_functions.two_histogram_data_MC(T23, T23_sim, "$T_{23}$", "", bins = 100, density = False, title = title, labelx = 'dati', labely= 'simulazione', range = (0., 60.))
+        
+      plot_functions.two_histogram_data_MC(TOF, TOF_sim, "$Tof [ns]$", "", bins = 100, density = False, title = title, labelx = 'dati', labely= 'simulazione', range = (-10., 20.))
+      
+      plot_functions.two_histogram_data_MC(beta, beta_sim, "$beta$", "", bins = 100, density = False, title = title, labelx = 'dati', labely= 'simulazione', range = (0., 3.))
+               
+          
+          
+      
+      
+      
+      
+      
+      """
       #deconvoluzione 
       plt.figure("beta_misurato")
       n, bins, patches = plt.hist(beta,  bins = 301, range = (0., 3.), density = False, label = '')    
@@ -112,7 +129,7 @@ if __name__ == '__main__' :
       plt.figure()
       plt.plot(remainder)
       print(remainder)
-
+      """
     plt.ion() 
     plt.show()
 

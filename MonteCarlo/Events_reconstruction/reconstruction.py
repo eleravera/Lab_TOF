@@ -32,8 +32,8 @@ if __name__ == '__main__' :
     mask = f > 0.5
     print("efficienza/tot:", numpy.sum(f), len(f)) 
            
-    delay_T13 = numpy.ones(int(numpy.sum(f))) * 26.1 #ns
-    delay_T23 = numpy.ones(int(numpy.sum(f))) * 26.2 #ns
+    delay_T13 = numpy.ones(int(numpy.sum(f))) * 25.0 #ns
+    delay_T23 = numpy.ones(int(numpy.sum(f))) * 25.1 #ns
     delay_T12 = delay_T13
     z_13 = 1.77
    

@@ -25,7 +25,10 @@ if __name__ == '__main__' :
     plot_flag = options['plot_flag']
      
     #Genero un muone con le funzioni di muon_generator_functions nella configurazione con scintillatore 3 sotto la barra       
-    E, P, beta = muon_generator_functions.muon_energy_generator(N, muon_generator_functions.distr_energy, 300., 1.e5) 
+    #E, P, beta = muon_generator_functions.muon_energy_generator(N, muon_generator_functions.distr_energy, 10., 1.e5)     
+    #E, P, beta = muon_generator_functions.muon_energy_generator_constant(N, 1000.)
+    E, P, beta = muon_generator_functions.muon_energy_generator(N, muon_generator_functions.spectrum, 1., 1.e5, -2.7, 300., 50.)        
+    
     theta, phi = muon_generator_functions.muon_angle_generator(N, muon_generator_functions.dist_theta)
     
     x1, y1 = muon_generator_functions.position_on_S1_generator(N) 
@@ -58,7 +61,7 @@ if __name__ == '__main__' :
       plot_functions.multiple_histogram(x3[mask], y3[mask], "x3[mask]", "y3[mask]", bins=45)  
       plot_functions.multiple_histogram(x1, y1, "x1", "y1", bins=45)      
       plot_functions.multiple_histogram(x1[mask], y1[mask], "x1[mask]", "y1[mask]", bins=45)  
-      
+      plot_functions.histogram(E[mask], "E[mask]", "", bins = None, range = (0., 1000), f=False, density = False, title = '', legend = '')
       plt.ion()
       plt.show()
       

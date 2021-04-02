@@ -129,6 +129,16 @@ if __name__ == '__main__' :
 
     title = '%s cm , %d eventi %d secondi, %s' % (position, len(T13), t_run, date)  
     figlabel = position + 'cm_T13'   
+    
+    """
+    title = '%s cm , %d eventi %d secondi, %s' % (position, len(T13), t_run, date)  
+    data_mean = T13.mean()
+    p0 = [0.15, len(T13)/data_bins,  data_mean - 1., 4., data_mean, 0.9]
+    bounds = (0.1, 0., data_mean*0.7, 1., data_mean*0.7 , 0.3 ), (0.4, numpy.inf, data_mean*1.3, 6., data_mean*1.3, 1.)    
+    opt_true, pcov_true = plot_functions.fit2gauss(T13, "$T_{13}[ns]$", "entries/bin", bins = 60, range=(30, 45.), f = True, p0=p0,
+    bounds = bounds, title = title)
+    """  
+
     opt, pcov, opt_conv, pcov_conv = convolution_and_fit(T13_sim, T13, "$T_{13}[ns]$", "entries/bin", data_bins, data_range, sim_bins, sim_range, title, figlabel, save_fig )
  
     param_2gauss_fit = utilities.make_opt_string(opt, pcov, s = string_x_n)
@@ -201,7 +211,9 @@ if __name__ == '__main__' :
  
     
     #x, n, frac, norm, mean1, sigma1, mean2, sigma2, dfrac, dnorm, dmean1, dsigma1, dmean2, dsigma2
- 
+    
+
+    
     plt.ion()
     plt.show()   
     
